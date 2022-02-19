@@ -22,4 +22,6 @@
     <style name="Theme.Telemergency.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.Telemergency.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Theme.FullScreen" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge"/>
 </resources>

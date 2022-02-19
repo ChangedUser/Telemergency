@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "836238301935",
+    "firebase_url": "https://telemergencydemo-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "telemergencydemo",
+    "storage_bucket": "telemergencydemo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:836238301935:android:e8e39ab9b87aa1fe65591a",
+        "android_client_info": {
+          "package_name": "com.example.telemergency"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "836238301935-rg8dqvslfmiumr4c5lm6m91qjdafcl36.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQGy-mx110lwMhukVZ8XrcAkUUsJPdG5g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "836238301935-rg8dqvslfmiumr4c5lm6m91qjdafcl36.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:836238301935:android:4e2e822bc1b78a3165591a",
+        "android_client_info": {
+          "package_name": "com.telemedicine.telemergency_webrtc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "836238301935-rg8dqvslfmiumr4c5lm6m91qjdafcl36.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQGy-mx110lwMhukVZ8XrcAkUUsJPdG5g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "836238301935-rg8dqvslfmiumr4c5lm6m91qjdafcl36.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
