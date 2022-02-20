@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">KotlinMessenger</string>
+    <string name="mic_button_string">Button that mutes and unmutes the microphone.</string>
+    <string name="video_button_string">Button that toggles between enabling and disabling a video.</string>
+    <string name="end_call_button_string">Button that ends an on-going call.</string>
+    <string name="camera_button_string">Button that switch between this devices cameras.</string>
+    <string name="audio_toggle_string">Button that toggles between muting and unmuting audio.</string>
 </resources>
