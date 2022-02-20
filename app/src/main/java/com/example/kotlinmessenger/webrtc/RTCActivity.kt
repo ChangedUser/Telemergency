@@ -53,7 +53,7 @@ class RTCActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.phone_layout)
+        // setContentView(R.layout.phone_layout)
 
         if (intent.hasExtra("meetingID"))
             meetingID = intent.getStringExtra("meetingID")!!
@@ -69,31 +69,31 @@ class RTCActivity : AppCompatActivity() {
         audio_output_button.setOnClickListener {
             if (inSpeakerMode) {
                 inSpeakerMode = false
-                audio_output_button.setImageResource(R.drawable.ic_baseline_hearing_24)
+                // audio_output_button.setImageResource(R.drawable.ic_baseline_hearing_24)
                 audioManager.setDefaultAudioDevice(RTCAudioManager.AudioDevice.EARPIECE)
             } else {
                 inSpeakerMode = true
-                audio_output_button.setImageResource(R.drawable.ic_baseline_speaker_up_24)
+                // audio_output_button.setImageResource(R.drawable.ic_baseline_speaker_up_24)
                 audioManager.setDefaultAudioDevice(RTCAudioManager.AudioDevice.SPEAKER_PHONE)
             }
         }
         video_button.setOnClickListener {
             if (isVideoPaused) {
                 isVideoPaused = false
-                video_button.setImageResource(R.drawable.ic_baseline_videocam_off_24)
+                // video_button.setImageResource(R.drawable.ic_baseline_videocam_off_24)
             } else {
                 isVideoPaused = true
-                video_button.setImageResource(R.drawable.ic_baseline_videocam_24)
+                // video_button.setImageResource(R.drawable.ic_baseline_videocam_24)
             }
             rtcClient.enableVideo(isVideoPaused)
         }
         mic_button.setOnClickListener {
             if (isMute) {
                 isMute = false
-                mic_button.setImageResource(R.drawable.ic_baseline_mic_off_24)
+                // mic_button.setImageResource(R.drawable.ic_baseline_mic_off_24)
             } else {
                 isMute = true
-                mic_button.setImageResource(R.drawable.ic_baseline_mic_24)
+                // mic_button.setImageResource(R.drawable.ic_baseline_mic_24)
             }
             rtcClient.enableAudio(isMute)
         }

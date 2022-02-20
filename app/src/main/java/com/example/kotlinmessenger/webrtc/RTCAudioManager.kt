@@ -432,8 +432,9 @@ class RTCAudioManager(context: Context) {
         amState = AudioManagerState.UNINITIALIZED
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         useSpeakerphone = sharedPreferences.getString(
-            context.getString(R.string.pref_speakerphone_key),
-            context.getString(R.string.pref_speakerphone_default)
+            "", ""
+            // context.getString(R.string.pref_speakerphone_key),
+            // context.getString(R.string.pref_speakerphone_default)
         )
         Log.d(TAG, "useSpeakerphone: $useSpeakerphone")
         if ((useSpeakerphone == SPEAKERPHONE_FALSE)) {
