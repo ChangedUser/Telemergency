@@ -42,22 +42,44 @@ class NewMessageActivity : AppCompatActivity() {
             override fun onCancelled(error: DatabaseError) {
             }
             override fun onDataChange(snapshot: DataSnapshot) {
+                var arrayHealthcare = arrayOf<User?>()
+                var arrayPatient = arrayOf<User?>()
+                var userRole = ""
                 //iterates through the users in the database
                 snapshot.children.forEach{
                     Log.d("NewMessageActivity", it.toString())
                     val user = it.getValue(User::class.java)
                     //checks that user is not null and not the one logged in
-                    if (user!=null && user.uid != FirebaseAuth.getInstance().currentUser?.uid) adapter.add(UserItem(user))
+                    if (user!=null && user.role=="Healthcare Professional" && user.uid != FirebaseAuth.getInstance().currentUser?.uid) {
+                        //adapter.add(UserItem(user))
+                        arrayHealthcare = append(arrayHealthcare, user)
+                    } else if (user!=null && user.role=="Patient" && user.uid != FirebaseAuth.getInstance().currentUser?.uid) {
+                        arrayPatient = append(arrayPatient, user)
+                    } else if (user!=null && user.uid == FirebaseAuth.getInstance().currentUser?.uid) {
+                        userRole = user.role
+                    }
+                }
+
+                if (userRole == "Patient") {
+                    for (userItem in arrayHealthcare) adapter.add(UserItem(userItem))
+                } else if (userRole == "Healthcare Professional") {
+                    for (userItem in arrayPatient) adapter.add(UserItem(userItem))
                 }
             }
         })
     }
-    class UserItem(val user: User): Item<ViewHolder>() {
+    class UserItem(val user: User?): Item<ViewHolder>() {
         override fun bind(viewHolder: ViewHolder, position: Int) {
-            viewHolder.itemView.username_textview_newmessage.text = user.username
+            viewHolder.itemView.username_textview_newmessage.text = user?.username ?: null
         }
         override fun getLayout(): Int {
             return R.layout.user_row_new_message
         }
+    }
+
+    fun <T> append(arr: Array<T>, element: T): Array<T?> {
+        val array = arr.copyOf(arr.size + 1)
+        array[arr.size] = element
+        return array
     }
 }
