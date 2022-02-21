@@ -27,7 +27,8 @@ class NewMessageActivity : AppCompatActivity() {
         //open chat log when you click the adapter for the user
         adapter.setOnItemClickListener { item, view ->
             val userItem = item as UserItem
-            val intent = Intent(this, ChatLogActivity::class.java)
+            //val intent = Intent(this, ChatLogActivity::class.java)
+            val intent = Intent(this, RequestEmergency::class.java)
             intent.putExtra(USER_KEY, userItem.user)
             startActivity(intent)
         }
@@ -36,6 +37,7 @@ class NewMessageActivity : AppCompatActivity() {
     companion object {
         val USER_KEY = "USER_KEY"
     }
+    //get all users in list
     private fun getUsers(adapter: GroupAdapter<ViewHolder>){
         val ref = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/users")
         ref.addListenerForSingleValueEvent(object: ValueEventListener{
@@ -76,7 +78,7 @@ class NewMessageActivity : AppCompatActivity() {
             return R.layout.user_row_new_message
         }
     }
-
+    //helper function: append item to array
     fun <T> append(arr: Array<T>, element: T): Array<T?> {
         val array = arr.copyOf(arr.size + 1)
         array[arr.size] = element
