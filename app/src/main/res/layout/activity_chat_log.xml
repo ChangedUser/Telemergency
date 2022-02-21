@@ -33,10 +33,9 @@
         android:id="@+id/recyclerview_chat_log"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="16dp"
         android:background="#E8E8E8"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@+id/edittext_chat_log"
+        app:layout_constraintBottom_toTopOf="@+id/meeting_id"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -58,8 +57,7 @@
         android:id="@+id/call_button"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="80dp"
+        android:layout_marginBottom="48dp"
         android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -67,13 +65,15 @@
 
     <EditText
         android:id="@+id/meeting_id"
-        android:layout_width="270dp"
-        android:layout_height="57dp"
-        android:layout_margin="16dp"
+        android:layout_width="233dp"
+        android:layout_height="50dp"
+        android:layout_margin="0dp"
         android:background="@drawable/curve_background"
         android:hint="Enter Meeting ID"
         android:padding="16dp"
-        tools:layout_editor_absoluteX="89dp"
-        tools:layout_editor_absoluteY="595dp" />
+        app:layout_constraintBottom_toTopOf="@+id/edittext_chat_log"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/call_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

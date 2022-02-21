@@ -7,7 +7,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.activity_main.*
 
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,7 +19,7 @@ class LoginActivity : AppCompatActivity() {
 
         login_button.setOnClickListener {
             val email = email_edittext_login.text.toString()
-            val password = password_edittext_login.text.toString()
+            val password = form_name.text.toString()
 
             //check if email/password empty
             if(email.isEmpty() || password.isEmpty()) {
