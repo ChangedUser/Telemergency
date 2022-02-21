@@ -19,7 +19,7 @@ class LoginActivity : AppCompatActivity() {
 
         login_button.setOnClickListener {
             val email = email_edittext_login.text.toString()
-            val password = form_name.text.toString()
+            val password = password_edittext_login.text.toString()
 
             //check if email/password empty
             if(email.isEmpty() || password.isEmpty()) {
