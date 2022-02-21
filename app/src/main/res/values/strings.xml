@@ -5,4 +5,6 @@
     <string name="end_call_button_string">Button that ends an on-going call.</string>
     <string name="camera_button_string">Button that switch between this devices cameras.</string>
     <string name="audio_toggle_string">Button that toggles between muting and unmuting audio.</string>
+    <string name="pref_speakerphone_key">speakerphone_preference</string>
+    <string name="pref_speakerphone_default">auto</string>
 </resources>

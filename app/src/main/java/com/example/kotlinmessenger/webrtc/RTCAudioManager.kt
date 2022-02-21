@@ -12,10 +12,11 @@ import android.os.Build
 import android.preference.PreferenceManager
 import android.util.Log
 import androidx.annotation.Nullable
+import com.example.kotlinmessenger.R
+import kotlinx.android.synthetic.main.phone_layout.*
 import org.webrtc.ThreadUtils
 import java.util.*
 import kotlin.collections.HashSet
-
 
 class RTCAudioManager(context: Context) {
     /**
@@ -432,9 +433,8 @@ class RTCAudioManager(context: Context) {
         amState = AudioManagerState.UNINITIALIZED
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         useSpeakerphone = sharedPreferences.getString(
-            "", ""
-            // context.getString(R.string.pref_speakerphone_key),
-            // context.getString(R.string.pref_speakerphone_default)
+            context.getString(R.string.pref_speakerphone_key),
+            context.getString(R.string.pref_speakerphone_default)
         )
         Log.d(TAG, "useSpeakerphone: $useSpeakerphone")
         if ((useSpeakerphone == SPEAKERPHONE_FALSE)) {

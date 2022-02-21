@@ -5,13 +5,22 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import com.example.kotlinmessenger.webrtc.RTCActivity
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_chat_log.*
+import kotlinx.android.synthetic.main.activity_latest_messages.*
 
 class LatestMessagesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_latest_messages)
         verifyUserIsLoggedIn()
+        emergency_button.setOnClickListener {
+            val intent = Intent(this@LatestMessagesActivity, RequestEmergency::class.java)
+            // intent.putExtra("meetingID",meeting_id.text.toString())
+            // intent.putExtra("isJoin",false)
+            startActivity(intent)
+        }
     }
 
     //verify is user is logged in, otherwise go to register screen

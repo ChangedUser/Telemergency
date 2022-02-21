@@ -19,33 +19,33 @@ class CallActivity : AppCompatActivity() {
         Constants.isIntiatedNow = true
         Constants.isCallEnded = true
         start_meeting.setOnClickListener {
-            if (meeting_id.text.toString().trim().isNullOrEmpty()) {
-                meeting_id.error = "Please enter meeting id"
+            if (meeting_id_end.text.toString().trim().isNullOrEmpty()) {
+                meeting_id_end.error = "Please enter meeting id"
             } else {
                 db.collection("calls")
-                        .document(meeting_id.text.toString())
+                        .document(meeting_id_end.text.toString())
                         .get()
                         .addOnSuccessListener {
                             if (it["type"]=="OFFER" || it["type"]=="ANSWER" || it["type"]=="END_CALL") {
-                                meeting_id.error = "Please enter another meeting ID"
+                                meeting_id_end.error = "Please enter another meeting ID"
                             } else {
                                 val intent = Intent(this@CallActivity, RTCActivity::class.java)
-                                intent.putExtra("meetingID",meeting_id.text.toString())
+                                intent.putExtra("meetingID",meeting_id_end.text.toString())
                                 intent.putExtra("isJoin",false)
                                 startActivity(intent)
                             }
                         }
                         .addOnFailureListener {
-                            meeting_id.error = "Please enter a new meeting ID"
+                            meeting_id_end.error = "Please enter a new meeting ID"
                         }
             }
         }
         join_meeting.setOnClickListener {
-            if (meeting_id.text.toString().trim().isNullOrEmpty())
-                meeting_id.error = "Please enter meeting id"
+            if (meeting_id_end.text.toString().trim().isNullOrEmpty())
+                meeting_id_end.error = "Please enter meeting id"
             else {
                 val intent = Intent(this@CallActivity, RTCActivity::class.java)
-                intent.putExtra("meetingID",meeting_id.text.toString())
+                intent.putExtra("meetingID",meeting_id_end.text.toString())
                 intent.putExtra("isJoin",true)
                 startActivity(intent)
             }

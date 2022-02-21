@@ -39,7 +39,7 @@
                 android:layout_margin="16dp"
                 android:background="@drawable/curve_background"
                 android:hint="Enter Meeting ID"
-                android:id="@+id/meeting_id"
+                android:id="@+id/meeting_id_end"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
             <LinearLayout

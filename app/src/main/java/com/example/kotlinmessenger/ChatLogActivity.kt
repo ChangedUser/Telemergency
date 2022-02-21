@@ -1,5 +1,7 @@
 package com.example.kotlinmessenger
 
+
+
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -23,16 +25,28 @@ import kotlinx.android.synthetic.main.chat_image_from_row.view.*
 import kotlinx.android.synthetic.main.chat_image_to_row.view.*
 import kotlinx.android.synthetic.main.chat_to_row.view.*
 import java.util.*
+// ### Call feature
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.example.kotlinmessenger.webrtc.Constants
+import com.example.kotlinmessenger.webrtc.RTCActivity
 
 class ChatLogActivity : AppCompatActivity() {
     private var user = User() ?: null
     private var fromId = String()
+    val db = Firebase.firestore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_log)
         user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
         fromId = FirebaseAuth.getInstance().uid ?: ""
         supportActionBar?.title = user?.username
+
+        // presetting some variables for the call feature
+        // setContentView(R.layout.phone_start)
+        Constants.isIntiatedNow = true
+        Constants.isCallEnded = true
 
         val adapter = GroupAdapter<ViewHolder>()
         //get the messages that will be added to adapter
@@ -45,6 +59,26 @@ class ChatLogActivity : AppCompatActivity() {
         }
         imagebutton_chat_log.setOnClickListener {
             performSendImage()
+        }
+        call_button.setOnClickListener {
+
+            db.collection("calls")
+                .document(meeting_id.text.toString())
+                .get()
+                .addOnSuccessListener {
+                    if (it["type"]=="OFFER" || it["type"]=="ANSWER" || it["type"]=="END_CALL") {
+                        meeting_id.error = "Please enter another meeting ID"
+                    } else {
+                        val intent = Intent(this@ChatLogActivity, RTCActivity::class.java)
+                        intent.putExtra("meetingID",meeting_id.text.toString())
+                        intent.putExtra("isJoin",false)
+                        startActivity(intent)
+                    }
+                }
+                .addOnFailureListener {
+                    meeting_id.error = "Please enter a new meeting ID"
+                }
+
         }
     }
     //send message with sender id, receiver id, text and timestamp
