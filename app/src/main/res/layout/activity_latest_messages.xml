@@ -1,24 +1,252 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#85E3FDF5"
     tools:context=".LatestMessagesActivity">
 
   <Button
-      android:id="@+id/emergency_button"
+      android:id="@+id/edit_profile_btn"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginStart="158dp"
-      android:layout_marginTop="314dp"
-      android:layout_marginEnd="159dp"
-      android:layout_marginBottom="369dp"
-      android:text="Request Emergency Validation"
-      app:layout_constraintBottom_toBottomOf="parent"
+      android:layout_marginTop="8dp"
+      android:layout_marginEnd="46dp"
+      android:text="Save"
       app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/illness_field" />
+
+  <TextView
+      android:id="@+id/last_msg_field"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      android:layout_marginEnd="56dp"
+      android:text="placeholder"
+      app:layout_constraintEnd_toStartOf="@+id/edit_profile_btn"
+      app:layout_constraintTop_toBottomOf="@+id/illness_field" />
+
+  <TextView
+      android:id="@+id/textView10"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="27dp"
+      android:layout_marginTop="22dp"
+      android:layout_marginEnd="15dp"
+      android:text="Last Active Chat:"
+      app:layout_constraintEnd_toStartOf="@+id/last_msg_field"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/illness__textfield" />
+
+  <TextView
+      android:id="@+id/birth_textfield"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="38dp"
+      android:layout_marginTop="33dp"
+      android:layout_marginEnd="73dp"
+      android:text="Date of birth"
+      app:layout_constraintEnd_toStartOf="@+id/birth_field"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/role_textfield" />
+
+  <TextView
+      android:id="@+id/mail_textfield"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="38dp"
+      android:layout_marginTop="40dp"
+      android:layout_marginEnd="122dp"
+      android:text="Mail"
+      app:layout_constraintEnd_toStartOf="@+id/mail__field"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/name_textfield" />
+
+  <TextView
+      android:id="@+id/role_textfield"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="38dp"
+      android:layout_marginTop="30dp"
+      android:layout_marginEnd="123dp"
+      android:text="Role"
+      app:layout_constraintEnd_toStartOf="@+id/role__field"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/mail_textfield" />
+
+  <TextView
+      android:id="@+id/drug_textfield"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="39dp"
+      android:layout_marginTop="38dp"
+      android:layout_marginEnd="42dp"
+      android:text="Drug Introlerance"
+      app:layout_constraintEnd_toStartOf="@+id/drug_field"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/allergies_textfield" />
+
+  <TextView
+      android:id="@+id/allergies_textfield"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="39dp"
+      android:layout_marginTop="39dp"
+      android:layout_marginEnd="95dp"
+      android:text="Allergies"
+      app:layout_constraintEnd_toStartOf="@+id/allergies_field"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/birth_textfield" />
+
+  <TextView
+      android:id="@+id/illness__textfield"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="39dp"
+      android:layout_marginTop="34dp"
+      android:layout_marginEnd="95dp"
+      android:text="Illnesses"
+      app:layout_constraintEnd_toStartOf="@+id/illness_field"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/drug_textfield" />
+
+  <Button
+      android:id="@+id/evaluate_emergency_btn"
+      android:layout_width="wrap_content"
+      android:layout_height="48dp"
+      android:layout_marginStart="28dp"
+      android:layout_marginTop="8dp"
+      android:text="Evaluate Emergency"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/textView10" />
+
+  <EditText
+      android:id="@+id/username_field"
+      android:layout_width="200dp"
+      android:layout_height="42dp"
+      android:layout_marginTop="16dp"
+      android:layout_marginEnd="47dp"
+      android:autoText="false"
+      android:ems="10"
+      android:inputType="textPersonName"
+      android:text="-"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+  <EditText
+      android:id="@+id/drug_field"
+      android:layout_width="200dp"
+      android:layout_height="42dp"
+      android:layout_marginTop="16dp"
+      android:layout_marginEnd="45dp"
+      android:autoText="false"
+      android:ems="10"
+      android:inputType="textPersonName"
+      android:text="-"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/allergies_field" />
+
+  <EditText
+      android:id="@+id/illness_field"
+      android:layout_width="200dp"
+      android:layout_height="42dp"
+      android:layout_marginTop="16dp"
+      android:layout_marginEnd="45dp"
+      android:autoText="false"
+      android:ems="10"
+      android:inputType="textPersonName"
+      android:text="-"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/drug_field" />
+
+  <EditText
+      android:id="@+id/name__field"
+      android:layout_width="200dp"
+      android:layout_height="42dp"
+      android:layout_marginTop="14dp"
+      android:layout_marginEnd="47dp"
+      android:autoText="false"
+      android:ems="10"
+      android:inputType="textPersonName"
+      android:text="-"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/username_field" />
+
+  <EditText
+      android:id="@+id/mail__field"
+      android:layout_width="200dp"
+      android:layout_height="42dp"
+      android:layout_marginTop="10dp"
+      android:layout_marginEnd="47dp"
+      android:autoText="false"
+      android:ems="10"
+      android:inputType="textPersonName"
+      android:text="-"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/name__field" />
+
+  <EditText
+      android:id="@+id/role__field"
+      android:layout_width="200dp"
+      android:layout_height="42dp"
+      android:layout_marginTop="10dp"
+      android:layout_marginEnd="45dp"
+      android:autoText="false"
+      android:ems="10"
+      android:inputType="textPersonName"
+      android:text="-"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/mail__field" />
+
+  <EditText
+      android:id="@+id/birth_field"
+      android:layout_width="200dp"
+      android:layout_height="42dp"
+      android:layout_marginTop="12dp"
+      android:layout_marginEnd="45dp"
+      android:autoText="false"
+      android:ems="10"
+      android:inputType="textPersonName"
+      android:text="-"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/role__field" />
+
+  <EditText
+      android:id="@+id/allergies_field"
+      android:layout_width="200dp"
+      android:layout_height="42dp"
+      android:layout_marginTop="14dp"
+      android:layout_marginEnd="45dp"
+      android:autoText="false"
+      android:ems="10"
+      android:inputType="textPersonName"
+      android:text="-"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/birth_field" />
+
+  <TextView
+      android:id="@+id/username_textfield"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="39dp"
+      android:layout_marginTop="27dp"
+      android:layout_marginEnd="84dp"
+      android:text="Username"
+      app:layout_constraintEnd_toStartOf="@+id/username_field"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent" />
+
+  <TextView
+      android:id="@+id/name_textfield"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="39dp"
+      android:layout_marginTop="34dp"
+      android:layout_marginEnd="111dp"
+      android:text="Name"
+      app:layout_constraintEnd_toStartOf="@+id/name__field"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/username_textfield" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

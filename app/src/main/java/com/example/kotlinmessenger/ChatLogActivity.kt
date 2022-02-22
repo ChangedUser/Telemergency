@@ -3,6 +3,7 @@ package com.example.kotlinmessenger
 
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -10,10 +11,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
@@ -30,6 +27,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.example.kotlinmessenger.webrtc.Constants
 import com.example.kotlinmessenger.webrtc.RTCActivity
+import com.google.firebase.database.*
+import kotlinx.android.synthetic.main.phone_start.*
 
 class ChatLogActivity : AppCompatActivity() {
     private var user = User() ?: null
@@ -53,6 +52,8 @@ class ChatLogActivity : AppCompatActivity() {
         getMessages(adapter, fromId, user?.uid ?: "")
         recyclerview_chat_log.adapter = adapter
 
+
+
         //send new message when button is clicked
         send_button_chat_log.setOnClickListener {
             performSendMessage(fromId, user?.uid ?: "")
@@ -61,7 +62,44 @@ class ChatLogActivity : AppCompatActivity() {
             performSendImage()
         }
         call_button.setOnClickListener {
+            val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
+            val userRole = sharePref.getString("role", "defaultRole")!!
+            if (userRole == "Patient") {
+                Log.i("Patient Connection", userRole)
+                if (meeting_id.text.toString().trim().isNullOrEmpty())
+                    meeting_id.error = "Please enter meeting id"
+                else {
+                    val intent = Intent(this@ChatLogActivity, RTCActivity::class.java)
+                    intent.putExtra("meetingID",meeting_id.text.toString())
+                    intent.putExtra("isJoin",true)
+                    startActivity(intent)
+                }
+            } else if (userRole == "Healthcare Professional") {
+                Log.i("Professional Connection", userRole)
+                if (meeting_id.text.toString().trim().isNullOrEmpty()) {
+                    meeting_id.error = "Please enter meeting id"
+                } else {
+                    db.collection("calls")
+                        .document(meeting_id.text.toString())
+                        .get()
+                        .addOnSuccessListener {
+                            if (it["type"]=="OFFER" || it["type"]=="ANSWER" || it["type"]=="END_CALL") {
+                                meeting_id.error = "Please enter another meeting ID"
+                            } else {
+                                val intent = Intent(this@ChatLogActivity, RTCActivity::class.java)
+                                intent.putExtra("meetingID",meeting_id.text.toString())
+                                intent.putExtra("isJoin",false)
+                                startActivity(intent)
+                            }
+                        }
+                        .addOnFailureListener {
+                            meeting_id.error = "Please enter a new meeting ID"
+                        }
+                }
 
+            }
+
+            /*
             db.collection("calls")
                 .document(meeting_id.text.toString())
                 .get()
@@ -79,8 +117,13 @@ class ChatLogActivity : AppCompatActivity() {
                     meeting_id.error = "Please enter a new meeting ID"
                 }
 
+             */
+
         }
     }
+
+
+
     //send message with sender id, receiver id, text and timestamp
     private fun performSendMessage(fromId: String, toId: String) {
         val text = edittext_chat_log.text.toString()

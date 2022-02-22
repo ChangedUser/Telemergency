@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
+import android.util.TimeFormatException
 import android.view.View
 import android.widget.RadioButton
 import android.widget.RadioGroup
@@ -14,6 +15,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_main.*
+import java.sql.Timestamp
 
 class MainActivity : AppCompatActivity() {
     //private lateinit var mDbRef: DatabaseReference
@@ -80,4 +82,9 @@ class MainActivity : AppCompatActivity() {
 @Parcelize
 class User(val uid : String, val username : String, val role : String): Parcelable {
     constructor(): this("", "", "")
+}
+
+@Parcelize
+class Message(val fromId: String, val id: String, val text: String, val timestamp: Timestamp, val toId: String): Parcelable {
+    constructor(): this("", "", "", java.sql.Timestamp(0) , "")
 }

@@ -1,6 +1,8 @@
 package com.example.kotlinmessenger
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +11,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.getValue
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
@@ -24,19 +27,33 @@ class NewMessageActivity : AppCompatActivity() {
         //adapter needed for the recycler view, will contain all the users
         val adapter = GroupAdapter<ViewHolder>()
         getUsers(adapter)
+
+        // GET shared pref
+        val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
+        val userRole = sharePref.getString("role", "defaultRole")!!
+
         //open chat log when you click the adapter for the user
         adapter.setOnItemClickListener { item, view ->
             val userItem = item as UserItem
-            //val intent = Intent(this, ChatLogActivity::class.java)
-            val intent = Intent(this, RequestEmergency::class.java)
-            intent.putExtra(USER_KEY, userItem.user)
-            startActivity(intent)
+
+            if (userRole == "Patient") {
+                val intent = Intent(this, RequestEmergency::class.java)
+                intent.putExtra(USER_KEY, userItem.user)
+                startActivity(intent)
+            } else if (userRole == "Healthcare Professional") {
+                val intent = Intent(this, ChatLogActivity::class.java)
+                intent.putExtra(USER_KEY, userItem.user)
+                startActivity(intent)
+            }
+
         }
         recyclerview_newmessage.adapter = adapter
     }
     companion object {
         val USER_KEY = "USER_KEY"
     }
+
+
     //get all users in list
     private fun getUsers(adapter: GroupAdapter<ViewHolder>){
         val ref = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/users")
@@ -49,7 +66,7 @@ class NewMessageActivity : AppCompatActivity() {
                 var userRole = ""
                 //iterates through the users in the database
                 snapshot.children.forEach{
-                    Log.d("NewMessageActivity", it.toString())
+                    // Log.d("NewMessageActivity", it.toString())
                     val user = it.getValue(User::class.java)
                     //checks that user is not null and not the one logged in
                     if (user!=null && user.role=="Healthcare Professional" && user.uid != FirebaseAuth.getInstance().currentUser?.uid) {
@@ -59,6 +76,14 @@ class NewMessageActivity : AppCompatActivity() {
                         arrayPatient = append(arrayPatient, user)
                     } else if (user!=null && user.uid == FirebaseAuth.getInstance().currentUser?.uid) {
                         userRole = user.role
+
+                        // Setting User Role Pref ...
+                        val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
+                        var editor = sharePref.edit()
+                        editor.remove("role")
+                        // editor.putString("role", snapshot.getValue().toString())
+                        editor.putString("role", userRole)
+                        editor.commit()
                     }
                 }
 
@@ -67,9 +92,11 @@ class NewMessageActivity : AppCompatActivity() {
                 } else if (userRole == "Healthcare Professional") {
                     for (userItem in arrayPatient) adapter.add(UserItem(userItem))
                 }
+
             }
         })
     }
+
     class UserItem(val user: User?): Item<ViewHolder>() {
         override fun bind(viewHolder: ViewHolder, position: Int) {
             viewHolder.itemView.username_textview_newmessage.text = user?.username ?: null

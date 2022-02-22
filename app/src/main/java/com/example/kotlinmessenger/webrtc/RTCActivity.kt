@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 // import com.example.kotlinmessenger.CallActivity
 import com.example.kotlinmessenger.ChatLogActivity
+import com.example.kotlinmessenger.NewMessageActivity
 import com.example.kotlinmessenger.R
 import kotlinx.android.synthetic.main.phone_layout.*
 import kotlinx.android.synthetic.main.phone_start.*
@@ -104,7 +105,7 @@ class RTCActivity : AppCompatActivity() {
             remote_view.isGone = false
             Constants.isCallEnded = true
             finish()
-            startActivity(Intent(this@RTCActivity, ChatLogActivity::class.java))
+            startActivity(Intent(this@RTCActivity, NewMessageActivity::class.java))
         }
     }
 
@@ -200,7 +201,7 @@ class RTCActivity : AppCompatActivity() {
                 Constants.isCallEnded = true
                 rtcClient.endCall(meetingID)
                 finish()
-                startActivity(Intent(this@RTCActivity, ChatLogActivity::class.java))
+                startActivity(Intent(this@RTCActivity, NewMessageActivity::class.java))
             }
         }
     }

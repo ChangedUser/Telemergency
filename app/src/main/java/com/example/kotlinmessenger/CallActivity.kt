@@ -1,8 +1,10 @@
 package com.example.kotlinmessenger
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.phone_start.*
@@ -19,10 +21,25 @@ class CallActivity : AppCompatActivity() {
         Constants.isIntiatedNow = true
         Constants.isCallEnded = true
         start_meeting.setOnClickListener {
-            if (meeting_id_end.text.toString().trim().isNullOrEmpty()) {
-                meeting_id_end.error = "Please enter meeting id"
-            } else {
-                db.collection("calls")
+            val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
+            val userRole = sharePref.getString("role", "defaultRole")!!
+
+            if (userRole == "Patient") {
+                Log.i("Patient Connection", userRole)
+                if (meeting_id_end.text.toString().trim().isNullOrEmpty())
+                    meeting_id_end.error = "Please enter meeting id"
+                else {
+                    val intent = Intent(this@CallActivity, RTCActivity::class.java)
+                    intent.putExtra("meetingID",meeting_id_end.text.toString())
+                    intent.putExtra("isJoin",false)
+                    startActivity(intent)
+                }
+            } else if (userRole == "Healthcare Professional") {
+                Log.i("Professional Connection", userRole)
+                if (meeting_id_end.text.toString().trim().isNullOrEmpty()) {
+                    meeting_id_end.error = "Please enter meeting id"
+                } else {
+                    db.collection("calls")
                         .document(meeting_id_end.text.toString())
                         .get()
                         .addOnSuccessListener {
@@ -38,7 +55,10 @@ class CallActivity : AppCompatActivity() {
                         .addOnFailureListener {
                             meeting_id_end.error = "Please enter a new meeting ID"
                         }
+                }
+
             }
+
         }
         join_meeting.setOnClickListener {
             if (meeting_id_end.text.toString().trim().isNullOrEmpty())
