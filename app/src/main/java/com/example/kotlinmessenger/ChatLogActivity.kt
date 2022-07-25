@@ -127,6 +127,15 @@ class ChatLogActivity : AppCompatActivity() {
     //send message with sender id, receiver id, text and timestamp
     private fun performSendMessage(fromId: String, toId: String) {
         val text = edittext_chat_log.text.toString()
+        val chatMessage = ChatMessage("", text, null, fromId, toId, System.currentTimeMillis()/1000)
+        db.collection("messages").document().set(chatMessage)
+            .addOnSuccessListener {
+                Log.d("ChatLogActivity", "Saved our chat message ${text}")
+                edittext_chat_log.text.clear()
+            }
+            .addOnFailureListener { e -> Log.w("MSG_SEND_ERR", "Error writing document", e) }
+
+        /*
         val reference = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/messages").push()
         val chatMessage = ChatMessage(reference?.key ?: "", text, null, fromId, toId, System.currentTimeMillis()/1000)
         reference.setValue(chatMessage)
@@ -134,6 +143,8 @@ class ChatLogActivity : AppCompatActivity() {
                 Log.d("ChatLogActivity", "Saved our chat message ${reference.key}")
                 edittext_chat_log.text.clear()
             }
+
+         */
     }
     //starts the process of sending an image in the chat
     private fun performSendImage(){
@@ -165,40 +176,49 @@ class ChatLogActivity : AppCompatActivity() {
     }
     //sends image as a chat message
     private fun performSendImageChat(imagePath:String) {
-        val reference = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/messages").push()
-        val chatImage = ChatMessage(reference?.key ?: "", null, imagePath, fromId, user?.uid!!, System.currentTimeMillis()/1000)
-        reference.setValue(chatImage)
+
+        val text = edittext_chat_log.text.toString()
+        // todo ask tedi why the id is needed
+        val chatImage = ChatMessage("", null, imagePath, fromId, user?.uid!!, System.currentTimeMillis()/1000)
+        db.collection("messages").document().set(chatImage)
             .addOnSuccessListener {
-                Log.d("ChatLogActivity", "Saved our chat image ${reference.key}")
+                Log.d("ChatLogActivity", "Saved our Image message ${text}")
+                edittext_chat_log.text.clear()
             }
+            .addOnFailureListener { e -> Log.w("MSG_SEND_ERR", "Error writing document", e) }
     }
+
     //get messages to display on adapter
     private fun getMessages(adapter: GroupAdapter<ViewHolder>, fromId: String, toId: String) {
-        val reference = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/messages")
-        reference.addChildEventListener(object: ChildEventListener{
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val chatMessage = snapshot.getValue(ChatMessage::class.java)
-                if (chatMessage != null) {
-                    if (chatMessage.text!=null && chatMessage.text!="") {
-                        Log.d("ChatLogActivity", chatMessage.text)
-                        if(chatMessage.fromId == fromId && chatMessage.toId == toId) adapter.add(ChatToItem(chatMessage.text))
-                        if(chatMessage.fromId == toId && chatMessage.toId == fromId) adapter.add(ChatFromItem(chatMessage.text))
-                    } else if (chatMessage.imagePath != null && chatMessage.imagePath != "") {
-                        Log.d("ChatLogActivity", chatMessage.imagePath)
-                        if(chatMessage.fromId == fromId && chatMessage.toId == toId) adapter.add(ChatToImage(chatMessage.imagePath))
-                        if(chatMessage.fromId == toId && chatMessage.toId == fromId) adapter.add(ChatFromImage(chatMessage.imagePath))
+        Log.d("Testmessage", "Trying to get messages for fromID " + fromId)
+
+        db.collection("messages")
+            // .whereEqualTo("fromId", fromId)
+            .get()
+            .addOnSuccessListener { result ->
+                Log.d("Testmessage", result.toString())
+                for (document in result) {
+                    val text = document.get("text").toString()
+                    val path = document.get("imagePath").toString()
+                    val from = document.get("fromId").toString()
+                    val to = document.get("toId").toString()
+
+                    if (text != null && text != "") {
+                        Log.d("ChatLogActivity", text)
+                        // adapter.add(ChatToItem(chatMessage.text)
+                        if (from == fromId && toId == toId) adapter.add(ChatToItem(text))
+                        if (from == toId && to == fromId) adapter.add(ChatFromItem(text))
+                    } else if (path != null && path != "") {
+                        Log.d("ChatLogActivity", path)
+                        if (from == fromId && toId == toId) adapter.add(ChatToItem(path))
+                        if (from == toId && to == fromId) adapter.add(ChatFromItem(path))
                     }
                 }
             }
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+            .addOnFailureListener { exception ->
+                Log.d("Testmessage", "Error getting documents: ", exception)
             }
-            override fun onChildRemoved(snapshot: DataSnapshot) {
-            }
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-            }
-            override fun onCancelled(error: DatabaseError) {
-            }
-        })
+
     }
     class ChatFromItem(val text: String): Item<ViewHolder>() {
         override fun bind(viewHolder: ViewHolder, position: Int) {
