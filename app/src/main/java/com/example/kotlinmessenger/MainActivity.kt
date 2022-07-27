@@ -4,24 +4,27 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
-import android.util.TimeFormatException
+//import android.util.TimeFormatException
 import android.view.View
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
+//import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_main.*
 import java.sql.Timestamp
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
     //private lateinit var mDbRef: DatabaseReference
     var radioGroup: RadioGroup? = null
     var radioButton: RadioButton? = null
     var role = "Patient";
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -42,7 +45,8 @@ class MainActivity : AppCompatActivity() {
                     // else if successful
                     val uid = it.result?.user?.uid ?: ""
                     Log.d("MainActivity", "Successfully created user with uid: $uid" )
-                    saveUserToFirebaseDatabase(uid)
+                    //saveUserToFirebaseDatabase(uid)
+                    saveUserToFirestoreDatabase(uid,username_edittext_registration.text.toString(),role)
                 }
                 .addOnFailureListener {
                     Toast.makeText(this, "Failed to create user: ${it.message}", Toast.LENGTH_LONG).show()
@@ -56,6 +60,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun saveUserToFirestoreDatabase(uid : String, username: String, role: String){
+        val db = Firebase.firestore
+        //val user = User(uid, username_edittext_registration.text.toString(), role)
+        val user: MutableMap<String,Any> = HashMap()
+        user["uid"] = uid
+        user["username"] = username
+        user["role"] = role
+        db.collection("users")
+            .add(user)
+            .addOnSuccessListener {
+                Log.d("MainActivity", "User saved to database") //user created
+                val intent = Intent(this, LatestMessagesActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Failed to register user: ${it.message}", Toast.LENGTH_LONG).show()
+            }
+    }
+    /*
     private fun saveUserToFirebaseDatabase(uid : String){
         val user = User(uid, username_edittext_registration.text.toString(), role)
         val mDbRef = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/users/$uid")
@@ -70,7 +94,7 @@ class MainActivity : AppCompatActivity() {
             .addOnFailureListener {
                 Toast.makeText(this, "Failed to register user: ${it.message}", Toast.LENGTH_LONG).show()
             }
-    }
+    } */
 
     fun checkButton(v: View?) {
         val radioId = radioGroup!!.checkedRadioButtonId
