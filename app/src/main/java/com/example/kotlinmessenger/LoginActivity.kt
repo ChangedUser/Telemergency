@@ -11,6 +11,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
@@ -45,7 +46,10 @@ class LoginActivity : AppCompatActivity() {
                 }
                 .addOnFailureListener {
                     Toast.makeText(this, "Failed to log in: ${it.message}", Toast.LENGTH_LONG).show()
-                }
+                                 }
+
+
+
         }
     }
 
