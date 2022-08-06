@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
 import androidx.core.view.isVisible
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -21,6 +22,10 @@ class LatestMessagesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_latest_messages)
+
+        val bpmbutton = findViewById<Button>(R.id.bpmbutton)
+
+
         verifyUserIsLoggedIn()
 
         getLastCallForUser()
@@ -78,6 +83,13 @@ class LatestMessagesActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
+
+
+        bpmbutton.setOnClickListener {
+            val intent = Intent(this, LineChartActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     private fun getLastCallForUser(){
