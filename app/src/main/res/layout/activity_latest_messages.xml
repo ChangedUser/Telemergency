@@ -4,40 +4,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#85E3FDF5"
+    android:background="#19FFFFFF"
     tools:context=".LatestMessagesActivity">
 
   <Button
       android:id="@+id/edit_profile_btn"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginTop="8dp"
-      android:layout_marginEnd="46dp"
+      android:layout_marginStart="76dp"
+      android:layout_marginTop="276dp"
       android:text="Save"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/illness_field" />
+      app:layout_constraintStart_toEndOf="@+id/avatar_button"
+      app:layout_constraintTop_toBottomOf="@+id/birth_field" />
 
   <TextView
       android:id="@+id/last_msg_field"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="8dp"
-      android:layout_marginEnd="56dp"
+      android:layout_width="76dp"
+      android:layout_height="19dp"
+      android:layout_marginTop="216dp"
+      android:layout_marginEnd="168dp"
       android:text="placeholder"
-      app:layout_constraintEnd_toStartOf="@+id/edit_profile_btn"
-      app:layout_constraintTop_toBottomOf="@+id/illness_field" />
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/birth_field" />
 
   <TextView
       android:id="@+id/textView10"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginStart="27dp"
-      android:layout_marginTop="22dp"
+      android:layout_marginTop="228dp"
       android:layout_marginEnd="15dp"
       android:text="Last Active Chat:"
       app:layout_constraintEnd_toStartOf="@+id/last_msg_field"
+      app:layout_constraintHorizontal_bias="0.433"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/illness__textfield" />
+      app:layout_constraintTop_toBottomOf="@+id/birth_textfield" />
 
   <TextView
       android:id="@+id/birth_textfield"
@@ -115,27 +116,14 @@
       android:id="@+id/evaluate_emergency_btn"
       android:layout_width="wrap_content"
       android:layout_height="48dp"
-      android:layout_marginStart="28dp"
-      android:layout_marginTop="8dp"
-      android:text="Evaluate Emergency"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/textView10" />
-
-  <Button
-      android:id="@+id/bpmbutton"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginStart="29dp"
-      android:layout_marginTop="63dp"
-      android:layout_marginEnd="288dp"
-      android:layout_marginBottom="92dp"
-      android:text="show BpM History"
+      android:layout_marginEnd="56dp"
+      android:text="Emergency"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintHorizontal_bias="0.0"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/evaluate_emergency_btn"
-      app:layout_constraintVertical_bias="0.0" />
+      app:layout_constraintHorizontal_bias="1.0"
+      app:layout_constraintStart_toEndOf="@+id/avatar_button"
+      app:layout_constraintTop_toBottomOf="@+id/edit_profile_btn"
+      app:layout_constraintVertical_bias="0.321" />
 
   <EditText
       android:id="@+id/username_field"
@@ -265,6 +253,16 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toBottomOf="@+id/username_textfield" />
 
-
+  <ImageView
+      android:id="@+id/avatar_button"
+      android:layout_width="140dp"
+      android:layout_height="140dp"
+      android:layout_marginTop="276dp"
+      android:background="#00F44336"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.134"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/birth_field"
+      tools:srcCompat="@tools:sample/avatars" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
