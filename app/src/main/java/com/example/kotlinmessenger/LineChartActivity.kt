@@ -1,38 +1,44 @@
 package com.example.kotlinmessenger
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.regex.Pattern
+
 
 class LineChartActivity: AppCompatActivity() {
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.line_chart)
 
         setLineChartData()
+
     }
 
     fun setLineChartData()
     {
-        /*val xvalues = ArrayList<String>();
-        xvalues.add("10:00am")
-        xvalues.add("11:00am")
-        xvalues.add("1:00pm")
-        xvalues.add("7:00pm")
-        xvalues.add("10:00pm")
-*/
+
+        val lineentrybpm = getBpmData()
+/*
         val lineentry = ArrayList<Entry>();
         lineentry.add(Entry(0f,20f))
         lineentry.add(Entry(1f,50f))
         lineentry.add(Entry(2f,60f))
         lineentry.add(Entry(3f,30f))
         lineentry.add(Entry(4f,10f))
+        */
 
-        val linedataset = LineDataSet(lineentry, "First")
+        val linedataset = LineDataSet(lineentrybpm, "First")
 
         linedataset.color = resources.getColor(R.color.darkorange)
         linedataset.setDrawFilled(true)
@@ -46,19 +52,60 @@ class LineChartActivity: AppCompatActivity() {
         lineChart.data = data
         lineChart.setBackgroundColor(resources.getColor(R.color.white))
         lineChart.animateXY(3000, 3000)
+        lineChart.invalidate()
 
-    /*
 
-        var xvalues = ArrayList<LineEntry>()
+    }
 
-        xvalues.add(BarEntry(1f,0f))
-        xvalues.add(BarEntry(2f,0f))
-        xvalues.add(BarEntry(3f,0f))
-        xvalues.add(BarEntry(4f,0f))
-        xvalues.add(BarEntry(5f,0f))
-        xvalues.add(BarEntry(6f,0f))
-        xvalues.add(BarEntry(7f,0f))*/
+    fun getBpmData() :ArrayList<Entry>
+    {
+        val db = FirebaseFirestore.getInstance()
+        var lineentry = ArrayList<Entry>();
+/*
+        lineentry.add(Entry(0f,20f))
+        lineentry.add(Entry(1f,50f))
+        lineentry.add(Entry(2f,60f))
+        lineentry.add(Entry(3f,30f))
+        lineentry.add(Entry(4f,10f))*/
 
+        //      val list= mutableListOf<String>()
+
+        var fl : Float = 0f
+
+        db.collection("BpMs")
+            .get()
+            .addOnSuccessListener {
+
+                result ->
+                for (document in result) {
+
+                                        var bpmlive: String? = null
+
+                                        bpmlive = document["bpmlive"].toString().trim()
+
+                                        if(bpmlive.isNullOrBlank() or bpmlive.equals("null")) {
+                                                    }
+                                        else
+                                                    {
+
+
+                                                    lineentry.add(Entry(fl, bpmlive.toFloat()))
+
+                                                    fl += 1f
+                                                    }//Log.d(TAG, "ID: ${id} BPMLIVE: ${bpmlive}")
+                                        //Log.d(TAG, "${document.id} => ${document.data}")
+                                         }
+
+
+
+                                    }
+
+            .addOnFailureListener { exception ->
+                                     Log.d(TAG, "Error getting documents: ", exception)
+                                  }
+
+
+        return lineentry
     }
 
 
