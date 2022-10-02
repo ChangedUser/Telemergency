@@ -1,34 +1,42 @@
 package com.example.kotlinmessenger
 
 import android.content.ContentValues.TAG
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.android.synthetic.main.activity_main.*
-import java.util.regex.Pattern
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 
 class LineChartActivity: AppCompatActivity() {
+    var mHandler: Handler? = null
 
 
-
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.line_chart)
+        mHandler = Handler()
+        m_Runnable.run()
 
-        setLineChartData()
+        getBpmData()
+
+        //setLineChartData()
 
     }
 
-    fun setLineChartData()
+    fun setLineChartData(lineentrybpm: ArrayList<Entry> )
     {
-
-        val lineentrybpm = getBpmData()
 /*
         val lineentry = ArrayList<Entry>();
         lineentry.add(Entry(0f,20f))
@@ -51,13 +59,14 @@ class LineChartActivity: AppCompatActivity() {
 
         lineChart.data = data
         lineChart.setBackgroundColor(resources.getColor(R.color.white))
-        lineChart.animateXY(3000, 3000)
+        //lineChart.animateXY(3000, 3000)
         lineChart.invalidate()
 
 
     }
 
-    fun getBpmData() :ArrayList<Entry>
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getBpmData()
     {
         val db = FirebaseFirestore.getInstance()
         var lineentry = ArrayList<Entry>();
@@ -88,15 +97,24 @@ class LineChartActivity: AppCompatActivity() {
                                         else
                                                     {
 
+                                                    var chunks = bpmlive.split("|")
+                                                        for (chunk in chunks) {
+                                                            println(chunk)
+                                                        }
 
-                                                    lineentry.add(Entry(fl, bpmlive.toFloat()))
 
+                                                    val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSz")
+                                                    var dat = LocalDateTime.parse(chunks[2], pattern)
+
+                                                     //   lineentry.add(Entry(fl, fl))
+                                                       // lineentry.add(Entry(fl, bpmlive.toFloat()))
+                                                        lineentry.add(Entry(dat.toEpochSecond(ZoneOffset.UTC).toFloat(), chunks[1].toFloat()))
                                                     fl += 1f
                                                     }//Log.d(TAG, "ID: ${id} BPMLIVE: ${bpmlive}")
                                         //Log.d(TAG, "${document.id} => ${document.data}")
                                          }
 
-
+                                        setLineChartData(lineentry)
 
                                     }
 
@@ -105,8 +123,14 @@ class LineChartActivity: AppCompatActivity() {
                                   }
 
 
-        return lineentry
     }
 
-
+    private val m_Runnable: Runnable = object : Runnable {
+        @RequiresApi(Build.VERSION_CODES.O)
+        override fun run() {
+            //Toast.makeText(this@LineChartActivity, "in runnable", Toast.LENGTH_SHORT).show()
+            getBpmData()
+            this@LineChartActivity.mHandler?.postDelayed(this, 20000)
+        }
+    }
 }

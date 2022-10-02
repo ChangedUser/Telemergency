@@ -152,6 +152,11 @@ class LatestMessagesActivity : AppCompatActivity() {
                 uploadImageAndEditUser(selectedPhotoUri!!, uid)
             }
         }
+
+        bpmbutton.setOnClickListener {
+            val intent = Intent(this, LineChartActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     //selects the photo
