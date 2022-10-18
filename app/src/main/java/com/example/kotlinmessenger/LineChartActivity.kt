@@ -5,7 +5,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.github.mikephil.charting.data.Entry
@@ -70,6 +69,7 @@ class LineChartActivity: AppCompatActivity() {
     {
         val db = FirebaseFirestore.getInstance()
         var lineentry = ArrayList<Entry>();
+        var xvals = ArrayList<Float>();
 /*
         lineentry.add(Entry(0f,20f))
         lineentry.add(Entry(1f,50f))
@@ -80,6 +80,7 @@ class LineChartActivity: AppCompatActivity() {
         //      val list= mutableListOf<String>()
 
         var fl : Float = 0f
+        var min: Float = 0f
 
         db.collection("BpMs")
             .get()
@@ -108,11 +109,21 @@ class LineChartActivity: AppCompatActivity() {
 
                                                      //   lineentry.add(Entry(fl, fl))
                                                        // lineentry.add(Entry(fl, bpmlive.toFloat()))
+                                                        xvals.add(dat.toEpochSecond(ZoneOffset.UTC).toFloat())
                                                         lineentry.add(Entry(dat.toEpochSecond(ZoneOffset.UTC).toFloat(), chunks[1].toFloat()))
                                                     fl += 1f
                                                     }//Log.d(TAG, "ID: ${id} BPMLIVE: ${bpmlive}")
                                         //Log.d(TAG, "${document.id} => ${document.data}")
                                          }
+
+                                        min=getMinXValue(xvals)
+
+                                        var j : Int =0
+                                        for(j in lineentry.indices)
+                                                {
+                                                lineentry.get(j).x=lineentry.get(j).x-min;
+                                                }
+
 
                                         setLineChartData(lineentry)
 
@@ -123,6 +134,21 @@ class LineChartActivity: AppCompatActivity() {
                                   }
 
 
+    }
+
+    private fun getMinXValue(xvals: ArrayList<Float>): Float {
+        var i : Int = 0
+        var m : Float = 0f
+
+        while (i < xvals.size)
+                        {
+                        if(i==0)
+                            m=xvals.get(0)
+                        else if (xvals.get(i)<m)
+                            m=xvals.get(i)
+                        i++;
+                        }
+        return m
     }
 
     private val m_Runnable: Runnable = object : Runnable {
