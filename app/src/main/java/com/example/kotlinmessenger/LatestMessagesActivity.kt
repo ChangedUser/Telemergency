@@ -24,6 +24,7 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_latest_messages.*
 import java.util.*
 
+//first activity after you log in, profile
 class LatestMessagesActivity : AppCompatActivity() {
     private val db = Firebase.firestore
     private var selectedPhotoUri: Uri? = null
