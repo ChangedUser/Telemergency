@@ -1,25 +1,30 @@
 package com.example.kotlinmessenger
 
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_main.*
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import com.example.kotlinmessenger.HourAxisValueFormatter
+import kotlinx.android.synthetic.main.line_chart.view.*
 
 
 class LineChartActivity: AppCompatActivity() {
     var mHandler: Handler? = null
-
+    var min: Float = 0f
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +62,13 @@ class LineChartActivity: AppCompatActivity() {
         val data = LineData(linedataset)
 
         lineChart.data = data
+        var xAxis :XAxis = lineChart.xAxis
         lineChart.setBackgroundColor(resources.getColor(R.color.white))
+        xAxis.valueFormatter = (HourAxisValueFormatter(min.toLong()))
+
+        var mv : MyMarkerView  = MyMarkerView(this, R.layout.marker_view, min.toLong())
+        lineChart.marker = mv
+
         //lineChart.animateXY(3000, 3000)
         lineChart.invalidate()
 
@@ -80,7 +91,7 @@ class LineChartActivity: AppCompatActivity() {
         //      val list= mutableListOf<String>()
 
         var fl : Float = 0f
-        var min: Float = 0f
+
 
         db.collection("BpMs")
             .get()

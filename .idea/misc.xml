@@ -29,6 +29,7 @@
         <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.307" />
         <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/mipmap-anydpi-v26/ic_telemergency_logo.xml" value="0.307" />
         <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/drawable/gradient_bg.xml" value="0.195" />
+        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/drawable/marker2.xml" value="0.1775" />
         <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/activity_chat_log.xml" value="0.14895833333333333" />
         <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/activity_latest_messages.xml" value="0.264" />
         <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/activity_login.xml" value="0.14895833333333333" />
@@ -40,6 +41,7 @@
         <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/chat_image_to_row.xml" value="0.14895833333333333" />
         <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/line_chart.xml" value="0.1" />
         <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/main_layout.xml" value="0.1716485507246377" />
+        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/marker_view.xml" value="0.15217391304347827" />
         <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/monitoring.xml" value="0.14895833333333333" />
         <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/phone_layout.xml" value="0.14895833333333333" />
         <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/phone_start.xml" value="0.14895833333333333" />
