@@ -1,7 +1,6 @@
 package com.example.kotlinmessenger
 
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -13,13 +12,16 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.line_chart.view.*
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import com.example.kotlinmessenger.HourAxisValueFormatter
-import kotlinx.android.synthetic.main.line_chart.view.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class LineChartActivity: AppCompatActivity() {
@@ -50,7 +52,7 @@ class LineChartActivity: AppCompatActivity() {
         lineentry.add(Entry(4f,10f))
         */
 
-        val linedataset = LineDataSet(lineentrybpm, "First")
+        val linedataset = LineDataSet(lineentrybpm, "BpM")
 
         linedataset.color = resources.getColor(R.color.darkorange)
         linedataset.setDrawFilled(true)
@@ -62,13 +64,13 @@ class LineChartActivity: AppCompatActivity() {
         val data = LineData(linedataset)
 
         lineChart.data = data
-        var xAxis :XAxis = lineChart.xAxis
         lineChart.setBackgroundColor(resources.getColor(R.color.white))
-        xAxis.valueFormatter = (HourAxisValueFormatter(min.toLong()))
+        //var valueFormatter = (HourAxisValueFormatter(min.toLong()))
+        lineChart.xAxis.valueFormatter = LineChartXAxisValueFormatter(min.toLong())
 
-        var mv : MyMarkerView  = MyMarkerView(this, R.layout.marker_view, min.toLong())
+        /*var mv : MyMarkerView  = MyMarkerView(this, R.layout.marker_view, min.toLong())
         lineChart.marker = mv
-
+*/
         //lineChart.animateXY(3000, 3000)
         lineChart.invalidate()
 
@@ -122,6 +124,8 @@ class LineChartActivity: AppCompatActivity() {
                                                        // lineentry.add(Entry(fl, bpmlive.toFloat()))
                                                         xvals.add(dat.toEpochSecond(ZoneOffset.UTC).toFloat())
                                                         lineentry.add(Entry(dat.toEpochSecond(ZoneOffset.UTC).toFloat(), chunks[1].toFloat()))
+
+
                                                     fl += 1f
                                                     }//Log.d(TAG, "ID: ${id} BPMLIVE: ${bpmlive}")
                                         //Log.d(TAG, "${document.id} => ${document.data}")
@@ -157,6 +161,8 @@ class LineChartActivity: AppCompatActivity() {
                             m=xvals.get(0)
                         else if (xvals.get(i)<m)
                             m=xvals.get(i)
+                        else
+                            {}
                         i++;
                         }
         return m
