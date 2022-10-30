@@ -41,7 +41,7 @@ class LineChartXAxisValueFormatter ( private val referenceTimestamp: Long)
     }
 
     init {
-        mDataFormat = SimpleDateFormat("dd.MM HH:mm", Locale.ENGLISH)
+        mDataFormat = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
         mDate = Date()
     }
 
