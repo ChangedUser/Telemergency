@@ -13,10 +13,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -151,6 +148,8 @@ class LatestMessagesActivity : AppCompatActivity() {
         edit_profile_btn.setOnClickListener {
             if (photoChanged && selectedPhotoUri != null) {
                 uploadImageAndEditUser(selectedPhotoUri!!, uid)
+            } else {
+                saveUserToFirestoreDatabase(uid)
             }
         }
 
@@ -173,11 +172,10 @@ class LatestMessagesActivity : AppCompatActivity() {
         }
     }
 
-    private fun getLastCallForUser(){
+    /*private fun getLastCallForUser(){
         val ref = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/messages")
             .orderByChild("/timeStamp")
         // .limitToLast(3)
-
         ref.addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
             }
@@ -206,7 +204,7 @@ class LatestMessagesActivity : AppCompatActivity() {
 
             }
         })
-    }
+    } */
 
     /*private fun getUserByUID(uid: String, user_type: String){
         // val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
@@ -288,14 +286,14 @@ class LatestMessagesActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 Log.d("LatestMessageActivity", "Successfully uploaded image: ${it.metadata?.path}")
                 ref.downloadUrl.addOnSuccessListener {
-                    saveUserToFirestoreDatabase(it.toString(), uid) //it.toString() is the url of the uploaded image
+                    saveUserToFirestoreDatabaseWithAvatar(it.toString(), uid) //it.toString() is the url of the uploaded image
                     photoChanged = false
                 }
             }
     }
 
-    //updates user in database
-    private fun saveUserToFirestoreDatabase(avatar : String, uid : String) {
+    //updates user in database if Avatar is also changed
+    private fun saveUserToFirestoreDatabaseWithAvatar(avatar : String, uid : String) {
         val username = username_field.text.toString()
         val name = name__field.text.toString()
         val email = mail__field.text.toString()
@@ -320,7 +318,42 @@ class LatestMessagesActivity : AppCompatActivity() {
         user["role"] = role
         db.collection("users")
             .document(uid)
-            .set(user)
+            .set(user, SetOptions.merge())
+            .addOnSuccessListener {
+                Log.d("MainActivity", "User edited in database") //user edited
+                Toast.makeText(this, "Profile edited successfully", Toast.LENGTH_LONG).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Failed to register user: ${it.message}", Toast.LENGTH_LONG).show()
+            }
+    }
+
+    //updates user in database without avatar
+    private fun saveUserToFirestoreDatabase(uid : String) {
+        val username = username_field.text.toString()
+        val name = name__field.text.toString()
+        val email = mail__field.text.toString()
+        val role = role__field.text.toString()
+        val birthdate = birth_field.text.toString()
+
+        val user: MutableMap<String,Any> = HashMap()
+        if (username != "") user["username"] = username
+        if (name != "") user["name"] = name
+        if (birthdate != "") user["birthdate"] = birthdate
+        //extra fields for patient
+        if (role == "Patient") {
+            val allergies = allergies_field.text.toString()
+            val drugs = drug_field.text.toString()
+            val illnesses = illness_field.text.toString()
+            if (allergies != "") user["allergies"] = allergies
+            if (drugs != "") user["drugs"] = drugs
+            if (illnesses != "") user["illnesses"] = illnesses
+        }
+        user["email"] = email
+        user["role"] = role
+        db.collection("users")
+            .document(uid)
+            .set(user, SetOptions.merge())
             .addOnSuccessListener {
                 Log.d("MainActivity", "User edited in database") //user edited
                 Toast.makeText(this, "Profile edited successfully", Toast.LENGTH_LONG).show()

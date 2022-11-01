@@ -28,7 +28,8 @@ import com.google.firebase.ktx.Firebase
 import com.example.kotlinmessenger.webrtc.Constants
 import com.example.kotlinmessenger.webrtc.RTCActivity
 import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.phone_start.*
+import com.google.firebase.firestore.SetOptions
+import kotlin.collections.ArrayList
 
 class ChatLogActivity : AppCompatActivity() {
     private var user = User() ?: null
@@ -127,12 +128,26 @@ class ChatLogActivity : AppCompatActivity() {
     //send message with sender id, receiver id, text and timestamp
     private fun performSendMessage(fromId: String, toId: String) {
         val text = edittext_chat_log.text.toString()
+
+        /*val newChatMessage: MutableMap<String,Any> = HashMap()
+newChatMessage["imagePath"] = ""
+newChatMessage["fromId"] = fromId
+newChatMessage["toId"] = toId
+newChatMessage["text"] = text
+newChatMessage["timeStamp"] = System.currentTimeMillis()/1000
+db.collection("messages").add(newChatMessage).addOnSuccessListener { documentReference ->
+    Log.d("ChatLogActivity", "DocumentSnapshot written with ID: ${documentReference.id}")
+    edittext_chat_log.text.clear()
+} */
+
         val reference = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/messages").push()
         val chatMessage = ChatMessage(reference?.key ?: "", text, null, fromId, toId, System.currentTimeMillis()/1000)
         reference.setValue(chatMessage)
             .addOnSuccessListener {
                 Log.d("ChatLogActivity", "Saved our chat message ${reference.key}")
                 edittext_chat_log.text.clear()
+                addToActiveChats(fromId, toId)
+                addToActiveChats(toId, fromId)
             }
     }
     //starts the process of sending an image in the chat
@@ -140,6 +155,19 @@ class ChatLogActivity : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
         startActivityForResult(intent, 0)
+    }
+    //add to the active chats of the user
+    private fun addToActiveChats(fromId : String, toId: String) {
+        //gets current user
+        val docRef = db.collection("users").document(fromId)
+        //find active chats of user, add the id if not existing already
+        docRef.get().addOnSuccessListener { user ->
+            val activeChats = user.data?.get("activeChats") as ArrayList<String>
+            if(!(activeChats.contains(toId))) activeChats.add(toId)
+            val data = hashMapOf("activeChats" to activeChats)
+            db.collection("users").document(fromId)
+                .set(data, SetOptions.merge())
+        }
     }
     //overridden function when image is selected
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -174,6 +202,32 @@ class ChatLogActivity : AppCompatActivity() {
     }
     //get messages to display on adapter
     private fun getMessages(adapter: GroupAdapter<ViewHolder>, fromId: String, toId: String) {
+        /*db.collection("messages")
+            .whereEqualTo("fromId", fromId)
+            .whereEqualTo("toId", toId)
+            .whereLessThanOrEqualTo("timeStamp", System.currentTimeMillis()/1000)
+            .orderBy("timeStamp")
+            .get().addOnSuccessListener { chatMessages ->
+                for (chatMessageDb in chatMessages) {
+                    Log.d("ChatLogActivity", "${chatMessageDb.id} => ${chatMessageDb.data}")
+                    var id = chatMessageDb.data?.get("id")
+                    var fromId = chatMessageDb.data?.get("fromId")
+                    var toId = chatMessageDb.data?.get("toId")
+                    var text = chatMessageDb.data?.get("text")
+                    var timeStamp = chatMessageDb.data?.get("timeStamp") as Long
+                    var imagePath = chatMessageDb.data?.get("imagePath")
+                    var chatMessage = ChatMessage(id.toString(), text.toString(), imagePath.toString(), fromId.toString(), toId.toString(), timeStamp)
+                    if (chatMessage.text!=null && chatMessage.text!="") {
+                        Log.d("ChatLogActivity", text.toString())
+                        if(chatMessage.fromId == fromId && chatMessage.toId == toId) adapter.add(ChatToItem(text.toString()))
+                        if(chatMessage.fromId == toId && chatMessage.toId == fromId) adapter.add(ChatFromItem(text.toString()))
+                    } else if (chatMessage.imagePath != null && chatMessage.imagePath != "") {
+                        Log.d("ChatLogActivity", imagePath.toString())
+                        if(chatMessage.fromId == fromId && chatMessage.toId == toId) adapter.add(ChatToImage(imagePath.toString()))
+                        if(chatMessage.fromId == toId && chatMessage.toId == fromId) adapter.add(ChatFromImage(imagePath.toString())) }
+                }
+            } */
+
         val reference = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/messages")
         reference.addChildEventListener(object: ChildEventListener{
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {

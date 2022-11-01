@@ -92,6 +92,7 @@ class MainActivity : AppCompatActivity() {
         user["role"] = role
         user["email"] = email
         user["avatar"] = avatar //give user a default avatar
+        user["activeChats"] = arrayListOf("")
         db.collection("users")
             .document(uid)
             .set(user)
