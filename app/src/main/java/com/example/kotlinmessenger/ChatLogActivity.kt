@@ -1,7 +1,5 @@
 package com.example.kotlinmessenger
 
-
-
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -52,8 +50,6 @@ class ChatLogActivity : AppCompatActivity() {
         //get the messages that will be added to adapter
         getMessages(adapter, fromId, user?.uid ?: "")
         recyclerview_chat_log.adapter = adapter
-
-
 
         //send new message when button is clicked
         send_button_chat_log.setOnClickListener {
@@ -123,8 +119,6 @@ class ChatLogActivity : AppCompatActivity() {
         }
     }
 
-
-
     //send message with sender id, receiver id, text and timestamp
     private fun performSendMessage(fromId: String, toId: String) {
         val text = edittext_chat_log.text.toString()
@@ -150,12 +144,14 @@ db.collection("messages").add(newChatMessage).addOnSuccessListener { documentRef
                 addToActiveChats(toId, fromId)
             }
     }
+
     //starts the process of sending an image in the chat
     private fun performSendImage(){
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
         startActivityForResult(intent, 0)
     }
+
     //add to the active chats of the user
     private fun addToActiveChats(fromId : String, toId: String) {
         //gets current user
@@ -169,6 +165,7 @@ db.collection("messages").add(newChatMessage).addOnSuccessListener { documentRef
                 .set(data, SetOptions.merge())
         }
     }
+
     //overridden function when image is selected
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -179,6 +176,7 @@ db.collection("messages").add(newChatMessage).addOnSuccessListener { documentRef
             if(uri != null) uploadImageToFirebaseStorage(uri)
         }
     }
+
     //function uploads image to storage
     private fun uploadImageToFirebaseStorage(selectedPhotoUri : Uri) {
         val filename = UUID.randomUUID().toString()
@@ -191,6 +189,7 @@ db.collection("messages").add(newChatMessage).addOnSuccessListener { documentRef
                 }
             }
     }
+
     //sends image as a chat message
     private fun performSendImageChat(imagePath:String) {
         val reference = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/messages").push()
@@ -200,6 +199,7 @@ db.collection("messages").add(newChatMessage).addOnSuccessListener { documentRef
                 Log.d("ChatLogActivity", "Saved our chat image ${reference.key}")
             }
     }
+
     //get messages to display on adapter
     private fun getMessages(adapter: GroupAdapter<ViewHolder>, fromId: String, toId: String) {
         /*db.collection("messages")
@@ -254,6 +254,7 @@ db.collection("messages").add(newChatMessage).addOnSuccessListener { documentRef
             }
         })
     }
+
     class ChatFromItem(val text: String): Item<ViewHolder>() {
         override fun bind(viewHolder: ViewHolder, position: Int) {
             viewHolder.itemView.textview_from_row.text = text

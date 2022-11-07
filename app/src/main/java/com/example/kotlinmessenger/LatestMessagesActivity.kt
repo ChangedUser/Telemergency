@@ -20,6 +20,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_latest_messages.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 //first activity after you log in, profile
 class LatestMessagesActivity : AppCompatActivity() {
@@ -47,6 +48,7 @@ class LatestMessagesActivity : AppCompatActivity() {
                     val avatar = document.data?.get("avatar")
                     val birthdate = document.data?.get("birthdate")
                     val name = document.data?.get("name")
+                    val activeChats = document.data?.get("activeChats") as ArrayList<String>
 
                     //fills generic attributes
                     username_field.setText(username.toString())
@@ -55,6 +57,10 @@ class LatestMessagesActivity : AppCompatActivity() {
                     if(email!=null) mail__field.setText(email.toString())
                     if(birthdate!=null) birth_field.setText(birthdate.toString())
                     if(name!=null) name__field.setText(name.toString())
+
+                    //get last active user in chat
+                    val lastUser = activeChats.get(activeChats.size-1)
+                    getLastChatUser(lastUser)
 
                     //hide fields if role is healthcare professional
                     if (role == "Healthcare Professional") {
@@ -365,5 +371,22 @@ class LatestMessagesActivity : AppCompatActivity() {
 
     private fun loadAvatarImage(imagePath: String) {
         Picasso.get().load(imagePath).resize(140, 140).centerCrop().into(avatar_button)
+    }
+
+    //finds the user from the id provided and writes it in the field
+    private fun getLastChatUser(lastUserId: String) {
+        Log.d(TAG, "Last user id is " + lastUserId)
+        val docRef = db.collection("users").document(lastUserId)
+        docRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    Log.d(TAG, "DocumentSnapshot data: ${document.data}") //document
+                    val username = document.data?.get("username")
+                    //val name = document.data?.get("name")
+                    last_msg_field.setText(username.toString()) //fills field with the last user's username
+                } else {
+                    Log.d(TAG, "getLastChatUser: No such user")
+                }
+            }
     }
 }
