@@ -35,28 +35,35 @@ class RequestEmergency: AppCompatActivity() {
 
     private fun performSendMessage(name: String, phone: String, address: String, blood: String, allergies: String, illnesses: String,
     currentAddress: String, someoneHurt: String, whatHappened: String, needed: String, fromId: String, toId: String) {
-        val text1 = "Patient: " + name + "; " + phone + "; " + address + "; " + blood
-        val text2 = "Allergies: " + allergies + "; Illnesses: " + illnesses
-        val text3 = "Location: " + currentAddress + " with: " + someoneHurt
-        val text4 = "Accident:" + whatHappened + "; Needed: "
+        val text1 = "Patient: " + name
+        val text2 = "Phone: " + phone
+        val text3 = "Address: " + address
+        val text4 = "Blood Type: " + blood
+        val text5 = "Allergies: " + allergies
+        val text6 = "Illnesses: " + illnesses
+        val text7 = "Location: " + currentAddress
+        val text8 = "Someone Hurt: " + someoneHurt
+        val text9 = "What Happened: " + whatHappened
+        val text10 = "Care Needed: " + needed
+        val fullText = text1 + "_n" + text2 + "_n" + text3 + "_n" + text4 + "_n" + text5 + "_n" + text6 + "_n" + text7  + "_n" + text8 + "_n" + text9 + "_n" + text10
         val firebaseDb = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/messages")
         val reference1 = firebaseDb.push()
-        val reference2 = firebaseDb.push()
-        val reference3 = firebaseDb.push()
-        val reference4 = firebaseDb.push()
+        //val reference2 = firebaseDb.push()
+        //val reference3 = firebaseDb.push()
+        //val reference4 = firebaseDb.push()
 
-        val chatMessage1 = ChatLogActivity.ChatMessage(reference1?.key ?: "", text1, null, fromId, toId, System.currentTimeMillis() / 1000)
-        val chatMessage2 = ChatLogActivity.ChatMessage(reference2?.key ?: "", text2, null, fromId, toId, System.currentTimeMillis() / 1000)
-        val chatMessage3 = ChatLogActivity.ChatMessage(reference3?.key ?: "", text3, null, fromId, toId, System.currentTimeMillis() / 1000)
-        val chatMessage4 = ChatLogActivity.ChatMessage(reference4?.key ?: "", text4, null, fromId, toId, System.currentTimeMillis() / 1000)
+        val chatMessage1 = ChatLogActivity.ChatMessage(reference1?.key ?: "", fullText, null, fromId, toId, System.currentTimeMillis() / 1000)
+        //val chatMessage2 = ChatLogActivity.ChatMessage(reference2?.key ?: "", text2, null, fromId, toId, System.currentTimeMillis() / 1000)
+        //val chatMessage3 = ChatLogActivity.ChatMessage(reference3?.key ?: "", text3, null, fromId, toId, System.currentTimeMillis() / 1000)
+        //val chatMessage4 = ChatLogActivity.ChatMessage(reference4?.key ?: "", text4, null, fromId, toId, System.currentTimeMillis() / 1000)
         reference1.setValue(chatMessage1)
             .addOnSuccessListener {
                 Log.d("ChatLogActivity", "Saved our chat message ${reference1.key}")
-                //val intent = Intent(this, ChatLogActivity::class.java)
-                //intent.putExtra(NewMessageActivity.USER_KEY, user)
-                //startActivity(intent)
+                val intent = Intent(this, ChatLogActivity::class.java)
+                intent.putExtra(NewMessageActivity.USER_KEY, user)
+                startActivity(intent)
             }
-        reference2.setValue(chatMessage2)
+        /*reference2.setValue(chatMessage2)
             .addOnSuccessListener {
                 Log.d("ChatLogActivity", "Saved our chat message ${reference2.key}")
                 //val intent = Intent(this, ChatLogActivity::class.java)
@@ -76,6 +83,6 @@ class RequestEmergency: AppCompatActivity() {
                 val intent = Intent(this, ChatLogActivity::class.java)
                 intent.putExtra(NewMessageActivity.USER_KEY, user)
                 startActivity(intent)
-            }
+            } */
     }
 }

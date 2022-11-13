@@ -1,14 +1,24 @@
 package com.example.kotlinmessenger
 
+// ### Call feature
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import com.example.kotlinmessenger.webrtc.Constants
+import com.example.kotlinmessenger.webrtc.RTCActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
@@ -20,14 +30,7 @@ import kotlinx.android.synthetic.main.chat_image_from_row.view.*
 import kotlinx.android.synthetic.main.chat_image_to_row.view.*
 import kotlinx.android.synthetic.main.chat_to_row.view.*
 import java.util.*
-// ### Call feature
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.example.kotlinmessenger.webrtc.Constants
-import com.example.kotlinmessenger.webrtc.RTCActivity
-import com.google.firebase.database.*
-import com.google.firebase.firestore.SetOptions
-import kotlin.collections.ArrayList
+
 
 class ChatLogActivity : AppCompatActivity() {
     private var user = User() ?: null
@@ -233,10 +236,29 @@ db.collection("messages").add(newChatMessage).addOnSuccessListener { documentRef
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java)
                 if (chatMessage != null) {
+                    var newText = ""
                     if (chatMessage.text!=null && chatMessage.text!="") {
                         Log.d("ChatLogActivity", chatMessage.text)
-                        if(chatMessage.fromId == fromId && chatMessage.toId == toId) adapter.add(ChatToItem(chatMessage.text))
-                        if(chatMessage.fromId == toId && chatMessage.toId == fromId) adapter.add(ChatFromItem(chatMessage.text))
+                        if (chatMessage.text.toString().contains("_n")) {
+                            newText = chatMessage.text.toString().replace("_n",System.getProperty("line.separator"))
+                        }
+
+                        if(chatMessage.fromId == fromId && chatMessage.toId == toId) {
+                            if (newText!="") {
+                                adapter.add(ChatToItem(newText))
+                                newText = ""
+                            } else {
+                                adapter.add(ChatToItem(chatMessage.text))
+                            }
+                        }
+                        if(chatMessage.fromId == toId && chatMessage.toId == fromId) {
+                            if (newText!="") {
+                                adapter.add(ChatFromItem(newText))
+                                newText = ""
+                            } else {
+                                adapter.add(ChatFromItem(chatMessage.text))
+                            }
+                        }
                     } else if (chatMessage.imagePath != null && chatMessage.imagePath != "") {
                         Log.d("ChatLogActivity", chatMessage.imagePath)
                         if(chatMessage.fromId == fromId && chatMessage.toId == toId) adapter.add(ChatToImage(chatMessage.imagePath))
