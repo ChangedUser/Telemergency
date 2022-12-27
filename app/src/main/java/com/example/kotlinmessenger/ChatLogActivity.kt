@@ -1,16 +1,24 @@
 package com.example.kotlinmessenger
 
-
-
+// ### Call feature
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import com.example.kotlinmessenger.webrtc.Constants
+import com.example.kotlinmessenger.webrtc.RTCActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
@@ -22,13 +30,7 @@ import kotlinx.android.synthetic.main.chat_image_from_row.view.*
 import kotlinx.android.synthetic.main.chat_image_to_row.view.*
 import kotlinx.android.synthetic.main.chat_to_row.view.*
 import java.util.*
-// ### Call feature
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.example.kotlinmessenger.webrtc.Constants
-import com.example.kotlinmessenger.webrtc.RTCActivity
-import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.phone_start.*
+
 
 class ChatLogActivity : AppCompatActivity() {
     private var user = User() ?: null
@@ -51,8 +53,6 @@ class ChatLogActivity : AppCompatActivity() {
         //get the messages that will be added to adapter
         getMessages(adapter, fromId, user?.uid ?: "")
         recyclerview_chat_log.adapter = adapter
-
-
 
         //send new message when button is clicked
         send_button_chat_log.setOnClickListener {
@@ -122,25 +122,53 @@ class ChatLogActivity : AppCompatActivity() {
         }
     }
 
-
-
     //send message with sender id, receiver id, text and timestamp
     private fun performSendMessage(fromId: String, toId: String) {
         val text = edittext_chat_log.text.toString()
+
+        /*val newChatMessage: MutableMap<String,Any> = HashMap()
+newChatMessage["imagePath"] = ""
+newChatMessage["fromId"] = fromId
+newChatMessage["toId"] = toId
+newChatMessage["text"] = text
+newChatMessage["timeStamp"] = System.currentTimeMillis()/1000
+db.collection("messages").add(newChatMessage).addOnSuccessListener { documentReference ->
+    Log.d("ChatLogActivity", "DocumentSnapshot written with ID: ${documentReference.id}")
+    edittext_chat_log.text.clear()
+} */
+
         val reference = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/messages").push()
         val chatMessage = ChatMessage(reference?.key ?: "", text, null, fromId, toId, System.currentTimeMillis()/1000)
         reference.setValue(chatMessage)
             .addOnSuccessListener {
                 Log.d("ChatLogActivity", "Saved our chat message ${reference.key}")
                 edittext_chat_log.text.clear()
+                addToActiveChats(fromId, toId)
+                addToActiveChats(toId, fromId)
             }
     }
+
     //starts the process of sending an image in the chat
     private fun performSendImage(){
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
         startActivityForResult(intent, 0)
     }
+
+    //add to the active chats of the user
+    private fun addToActiveChats(fromId : String, toId: String) {
+        //gets current user
+        val docRef = db.collection("users").document(fromId)
+        //find active chats of user, add the id if not existing already
+        docRef.get().addOnSuccessListener { user ->
+            val activeChats = user.data?.get("activeChats") as ArrayList<String>
+            if(!(activeChats.contains(toId))) activeChats.add(toId)
+            val data = hashMapOf("activeChats" to activeChats)
+            db.collection("users").document(fromId)
+                .set(data, SetOptions.merge())
+        }
+    }
+
     //overridden function when image is selected
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -151,6 +179,7 @@ class ChatLogActivity : AppCompatActivity() {
             if(uri != null) uploadImageToFirebaseStorage(uri)
         }
     }
+
     //function uploads image to storage
     private fun uploadImageToFirebaseStorage(selectedPhotoUri : Uri) {
         val filename = UUID.randomUUID().toString()
@@ -163,6 +192,7 @@ class ChatLogActivity : AppCompatActivity() {
                 }
             }
     }
+
     //sends image as a chat message
     private fun performSendImageChat(imagePath:String) {
         val reference = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/messages").push()
@@ -172,17 +202,63 @@ class ChatLogActivity : AppCompatActivity() {
                 Log.d("ChatLogActivity", "Saved our chat image ${reference.key}")
             }
     }
+
     //get messages to display on adapter
     private fun getMessages(adapter: GroupAdapter<ViewHolder>, fromId: String, toId: String) {
+        /*db.collection("messages")
+            .whereEqualTo("fromId", fromId)
+            .whereEqualTo("toId", toId)
+            .whereLessThanOrEqualTo("timeStamp", System.currentTimeMillis()/1000)
+            .orderBy("timeStamp")
+            .get().addOnSuccessListener { chatMessages ->
+                for (chatMessageDb in chatMessages) {
+                    Log.d("ChatLogActivity", "${chatMessageDb.id} => ${chatMessageDb.data}")
+                    var id = chatMessageDb.data?.get("id")
+                    var fromId = chatMessageDb.data?.get("fromId")
+                    var toId = chatMessageDb.data?.get("toId")
+                    var text = chatMessageDb.data?.get("text")
+                    var timeStamp = chatMessageDb.data?.get("timeStamp") as Long
+                    var imagePath = chatMessageDb.data?.get("imagePath")
+                    var chatMessage = ChatMessage(id.toString(), text.toString(), imagePath.toString(), fromId.toString(), toId.toString(), timeStamp)
+                    if (chatMessage.text!=null && chatMessage.text!="") {
+                        Log.d("ChatLogActivity", text.toString())
+                        if(chatMessage.fromId == fromId && chatMessage.toId == toId) adapter.add(ChatToItem(text.toString()))
+                        if(chatMessage.fromId == toId && chatMessage.toId == fromId) adapter.add(ChatFromItem(text.toString()))
+                    } else if (chatMessage.imagePath != null && chatMessage.imagePath != "") {
+                        Log.d("ChatLogActivity", imagePath.toString())
+                        if(chatMessage.fromId == fromId && chatMessage.toId == toId) adapter.add(ChatToImage(imagePath.toString()))
+                        if(chatMessage.fromId == toId && chatMessage.toId == fromId) adapter.add(ChatFromImage(imagePath.toString())) }
+                }
+            } */
+
         val reference = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/messages")
         reference.addChildEventListener(object: ChildEventListener{
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java)
                 if (chatMessage != null) {
+                    var newText = ""
                     if (chatMessage.text!=null && chatMessage.text!="") {
                         Log.d("ChatLogActivity", chatMessage.text)
-                        if(chatMessage.fromId == fromId && chatMessage.toId == toId) adapter.add(ChatToItem(chatMessage.text))
-                        if(chatMessage.fromId == toId && chatMessage.toId == fromId) adapter.add(ChatFromItem(chatMessage.text))
+                        if (chatMessage.text.toString().contains("_n")) {
+                            newText = chatMessage.text.toString().replace("_n",System.getProperty("line.separator"))
+                        }
+
+                        if(chatMessage.fromId == fromId && chatMessage.toId == toId) {
+                            if (newText!="") {
+                                adapter.add(ChatToItem(newText))
+                                newText = ""
+                            } else {
+                                adapter.add(ChatToItem(chatMessage.text))
+                            }
+                        }
+                        if(chatMessage.fromId == toId && chatMessage.toId == fromId) {
+                            if (newText!="") {
+                                adapter.add(ChatFromItem(newText))
+                                newText = ""
+                            } else {
+                                adapter.add(ChatFromItem(chatMessage.text))
+                            }
+                        }
                     } else if (chatMessage.imagePath != null && chatMessage.imagePath != "") {
                         Log.d("ChatLogActivity", chatMessage.imagePath)
                         if(chatMessage.fromId == fromId && chatMessage.toId == toId) adapter.add(ChatToImage(chatMessage.imagePath))
@@ -200,6 +276,7 @@ class ChatLogActivity : AppCompatActivity() {
             }
         })
     }
+
     class ChatFromItem(val text: String): Item<ViewHolder>() {
         override fun bind(viewHolder: ViewHolder, position: Int) {
             viewHolder.itemView.textview_from_row.text = text
