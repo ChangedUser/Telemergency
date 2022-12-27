@@ -28,11 +28,20 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintTop_toTopOf="parent" />
 
+  <Button
+      android:id="@+id/geolocation"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="204dp"
+      android:text="testlocation"
+      app:layout_constraintBottom_toBottomOf="parent"
+      tools:ignore="MissingConstraints"
+      tools:layout_editor_absoluteX="218dp" />
+
   <TextView
       android:id="@+id/last_msg_field"
       android:layout_width="76dp"
       android:layout_height="19dp"
-      android:layout_marginTop="216dp"
       android:layout_marginEnd="168dp"
       android:text="placeholder"
       app:layout_constraintEnd_toEndOf="parent"

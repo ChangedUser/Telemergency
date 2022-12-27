@@ -163,6 +163,12 @@ class LatestMessagesActivity : AppCompatActivity() {
             val intent = Intent(this, LineChartActivity::class.java)
             startActivity(intent)
         }
+
+        geolocation.setOnClickListener{
+           // val intent = Intent(this, GeoLocation::class.java)
+            val intent = Intent(this, OSMActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     //selects the photo
