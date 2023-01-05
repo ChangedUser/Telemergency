@@ -1,17 +1,24 @@
 package com.example.kotlinmessenger
 
+import android.Manifest
 import android.app.Activity
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
@@ -19,14 +26,20 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_latest_messages.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
-import kotlin.collections.ArrayList
 
 //first activity after you log in, profile
 class LatestMessagesActivity : AppCompatActivity() {
     private val db = Firebase.firestore
     private var selectedPhotoUri: Uri? = null
     var photoChanged = false
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var tvlatitude: TextView
+
+    private val locationPermissionCode = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +61,8 @@ class LatestMessagesActivity : AppCompatActivity() {
                     val avatar = document.data?.get("avatar")
                     val birthdate = document.data?.get("birthdate")
                     val name = document.data?.get("name")
-                    val activeChats = document.data?.get("activeChats") as ArrayList<String>
+
+                    //val activeChats = document.data?.get("activeChats") as ArrayList<String>
 
                     //fills generic attributes
                     username_field.setText(username.toString())
@@ -59,9 +73,9 @@ class LatestMessagesActivity : AppCompatActivity() {
                     if(name!=null) name__field.setText(name.toString())
 
                     //get last active user in chat
-                    val lastUser = activeChats.get(activeChats.size-1)
+                   /* val lastUser = activeChats.get(activeChats.size-1)
                     getLastChatUser(lastUser)
-
+*/
                     //hide fields if role is healthcare professional
                     if (role == "Healthcare Professional") {
                         evaluate_emergency_btn.setVisibility(View.INVISIBLE)
@@ -82,6 +96,9 @@ class LatestMessagesActivity : AppCompatActivity() {
                 } else {
                     Log.d(TAG, "No such user")
                 }
+
+
+
             }
             .addOnFailureListener { exception ->
                 Log.d(TAG, "get failed with ", exception)
@@ -169,6 +186,52 @@ class LatestMessagesActivity : AppCompatActivity() {
             val intent = Intent(this, OSMActivity::class.java)
             startActivity(intent)
         }
+
+
+            GlobalScope.launch(Dispatchers.IO) {
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this@LatestMessagesActivity)
+                //tvlatitude = findViewById(R.id.latitude)
+
+
+            if (ActivityCompat.checkSelfPermission(
+                    this@LatestMessagesActivity,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this@LatestMessagesActivity,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+
+            }
+            fusedLocationProviderClient.lastLocation
+                .addOnCompleteListener(this@LatestMessagesActivity) { task ->
+                    var location: Location? = task.result
+                    var loc = hashMapOf<String, String>()
+
+                        if (location != null) {
+                      //  tvlatitude.text = "" + location.latitude
+                            loc.set("Email:", FirebaseAuth.getInstance().currentUser!!.email.toString())
+                            loc.set("latitude", ""+location.latitude)
+                            loc.set("longitude", ""+location.longitude)
+                    db.collection("lastknownposition")
+                        .document(FirebaseAuth.getInstance().currentUser!!.uid)
+                        .set(loc)
+                        .addOnSuccessListener{ Log.d(TAG, "DocumentSnapshot successfully written!") }
+                        .addOnFailureListener{ e -> Log.d(TAG, "Error writing document!") }
+
+
+                    }
+                }
+
+        }
+
     }
 
     //selects the photo
@@ -395,4 +458,6 @@ class LatestMessagesActivity : AppCompatActivity() {
                 }
             }
     }
+
+
 }

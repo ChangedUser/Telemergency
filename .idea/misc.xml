@@ -3,54 +3,17 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.307" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/drawable/curve_background.xml" value="0.437" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/drawable/ic_baseline_hearing_24.xml" value="0.307" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/drawable/ic_baseline_videocam_24.xml" value="0.395" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/drawable/ic_launcher_background.xml" value="0.437" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/drawable/telemergency_logo.xml" value="0.307" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/drawable/telemergency_logo_main.xml" value="0.309" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/layout/activity_chat_log.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/layout/activity_latest_messages.xml" value="0.4466666666666667" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/layout/activity_login.xml" value="0.22" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/layout/activity_main.xml" value="0.22" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/layout/activity_new_message.xml" value="0.5369791666666667" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/layout/chat_from_row.xml" value="0.5369791666666667" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/layout/chat_image_from_row.xml" value="0.5369791666666667" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/layout/chat_image_to_row.xml" value="0.5369791666666667" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/layout/chat_to_row.xml" value="0.5369791666666667" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/layout/emergency_call.xml" value="0.30364583333333334" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/layout/phone_layout.xml" value="0.16666666666666666" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/layout/phone_start.xml" value="0.22" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/layout/user_row_new_message.xml" value="0.5369791666666667" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/menu/call_menu.xml" value="0.3807291666666667" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/menu/nav_chat.xml" value="0.34427083333333336" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/menu/nav_menu.xml" value="0.5369791666666667" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.307" />
-        <entry key="..\:/Users/Marko/AndroidStudioProjects/Telemergency/app/src/main/res/mipmap-anydpi-v26/ic_telemergency_logo.xml" value="0.307" />
-        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/drawable/gradient_bg.xml" value="0.195" />
-        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/drawable/marker2.xml" value="0.1775" />
-        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/activity_chat_log.xml" value="0.14895833333333333" />
-        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/activity_latest_messages.xml" value="0.264" />
-        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/activity_login.xml" value="0.14895833333333333" />
-        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/activity_main.xml" value="0.13269927536231885" />
-        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/activity_new_message.xml" value="0.13269927536231885" />
-        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/bpm_dashboard.xml" value="0.264" />
-        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/bpmlive_dashboard.xml" value="0.13269927536231885" />
-        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/chat_image_from_row.xml" value="0.14895833333333333" />
-        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/chat_image_to_row.xml" value="0.14895833333333333" />
-        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/line_chart.xml" value="0.1" />
-        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/main_layout.xml" value="0.1716485507246377" />
-        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/marker_view.xml" value="0.15217391304347827" />
-        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/monitoring.xml" value="0.14895833333333333" />
-        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/phone_layout.xml" value="0.14895833333333333" />
-        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/phone_start.xml" value="0.14895833333333333" />
-        <entry key="..\:/Users/tmoci/Pictures/Camera Roll/Telemergency/app/src/main/res/layout/activity_latest_messages.xml" value="0.2545289855072464" />
-        <entry key="..\:/Users/tmoci/Pictures/Camera Roll/Telemergency/app/src/main/res/layout/chat_to_row.xml" value="0.2545289855072464" />
-        <entry key="..\:/Users/tmoci/Pictures/Camera Roll/Telemergency/app/src/main/res/layout/emergency_call.xml" value="0.19746376811594202" />
+        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/activity_latest_messages.xml" value="0.2" />
+        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/activity_osm.xml" value="0.16510416666666666" />
+        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/chat_from_row.xml" value="0.1" />
+        <entry key="..\:/Users/pinto/AndroidStudioProjects/Telemergency/app/src/main/res/layout/geolocation.xml" value="0.11041666666666666" />
       </map>
     </option>
   </component>
-  <component name="ExternalStorageConfigurationManager" enabled="true" />
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
 </project>
