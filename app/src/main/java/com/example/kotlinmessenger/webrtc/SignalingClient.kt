@@ -52,7 +52,7 @@ class SignalingClient(
         db.enableNetwork().addOnSuccessListener {
             listener.onConnectionEstablished()
         }
-        val sendData = sendChannel.offer("")
+        val sendData = sendChannel.trySend("")
         sendData.let {
             Log.v(this@SignalingClient.javaClass.simpleName, "Sending: $it")
 //            val data = hashMapOf(

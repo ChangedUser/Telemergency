@@ -7,4 +7,6 @@
     <string name="audio_toggle_string">Button that toggles between muting and unmuting audio.</string>
     <string name="pref_speakerphone_key">speakerphone_preference</string>
     <string name="pref_speakerphone_default">auto</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

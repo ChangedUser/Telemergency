@@ -10,19 +10,22 @@ import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_main.*
 import java.sql.Timestamp
 import java.util.HashMap
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 //import com.google.firebase.database.FirebaseDatabase
 //import com.google.firebase.firestore.FirebaseFirestore
 //import java.util.ArrayList
 
 class MainActivity : AppCompatActivity() {
     //private lateinit var mDbRef: DatabaseReference
+    val db = Firebase.firestore
+
     private val avatar = "https://firebasestorage.googleapis.com/v0/b/telemedizinproject.appspot.com/o/images%2F426c243e-824f-424c-b068-871e4ad07bbd?alt=media&token=64df72f9-2927-4ae3-a2d9-ee76cb54d4ff"
     var radioGroup: RadioGroup? = null
     var radioButton: RadioButton? = null
@@ -107,7 +110,7 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-        fun checkButton(v: View?) {
+    fun checkButton(v: View?) {
         val radioId = radioGroup!!.checkedRadioButtonId
         radioButton = findViewById(radioId)
         role = radioButton?.getText() as String
