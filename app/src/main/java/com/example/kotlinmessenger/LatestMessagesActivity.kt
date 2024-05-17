@@ -16,6 +16,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.example.kotlinmessenger.icdapi.ICDAPIclient
+import com.example.kotlinmessenger.icdapi.ICDAPIclient.*
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
@@ -47,6 +49,11 @@ class LatestMessagesActivity : AppCompatActivity() {
         //verifies that the user is logged in before continuing further
         verifyUserIsLoggedIn()
         val uid = FirebaseAuth.getInstance().currentUser!!.uid
+
+        Log.d(TAG, "We be loading my API!") //document
+        val client = ICDAPIclient();
+        client.testAPI();
+        Log.d(TAG, "API Should have loaded") //document
 
         //finds the currently logged user in the firestore db
         val docRef = db.collection("users").document(uid)

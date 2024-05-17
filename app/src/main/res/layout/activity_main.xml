@@ -46,6 +46,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password_edittext_registration">
 
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/lineChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
         <RadioButton
             android:id="@+id/radio_one"
             android:layout_width="139dp"
@@ -122,11 +127,5 @@
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/telemergency_logo"
         tools:visibility="visible" />
-
-    <com.github.mikephil.charting.charts.LineChart
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/lineChart"
-        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

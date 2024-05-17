@@ -23,6 +23,15 @@
           android:orientation="vertical">
 
 
+        <ImageView
+            android:id="@+id/avatar_button"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:background="#00F44336"
+            tools:srcCompat="@tools:sample/avatars" />
+
         <TextView
             android:id="@+id/username_textfield"
             android:layout_width="100dp"
@@ -161,17 +170,6 @@
             app:layout_constraintTop_toBottomOf="@+id/last_msg_field"
             tools:ignore="MissingConstraints" />
 
-        <ImageView
-            android:id="@+id/avatar_button"
-            android:layout_width="140dp"
-            android:layout_height="140dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
-            android:background="#00F44336"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bpmbutton"
-            tools:srcCompat="@tools:sample/avatars" />
-
 
       </LinearLayout>
 
@@ -181,6 +179,16 @@
       android:orientation="vertical"
       android:layout_height="match_parent">
 
+
+        <ImageView
+            android:id="@+id/avatar_button2"
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:background="#00F44336"
+            android:visibility="invisible"
+            tools:srcCompat="@tools:sample/avatars" />
 
         <EditText
             android:id="@+id/username_field"
@@ -230,7 +238,6 @@
             android:autoText="false"
             android:ems="10"
             android:inputType="date"
-            android:text="-"
             app:layout_constraintStart_toEndOf="@+id/birth_textfield"
             app:layout_constraintTop_toBottomOf="@+id/role__field" />
 
@@ -319,4 +326,5 @@
       </LinearLayout>
     </LinearLayout>
 </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
