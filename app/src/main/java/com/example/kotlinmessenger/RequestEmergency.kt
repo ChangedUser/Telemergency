@@ -6,11 +6,18 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import kotlinx.android.synthetic.main.activity_chat_log.*
 import kotlinx.android.synthetic.main.emergency_call.*
+import java.util.ArrayList
+import java.util.HashMap
 
 class RequestEmergency: AppCompatActivity() {
     private var user = User() ?: null
     private var fromId = String()
+    private val db = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,23 +53,41 @@ class RequestEmergency: AppCompatActivity() {
         val text9 = "What Happened: " + whatHappened
         val text10 = "Care Needed: " + needed
         val fullText = text1 + "_n" + text2 + "_n" + text3 + "_n" + text4 + "_n" + text5 + "_n" + text6 + "_n" + text7  + "_n" + text8 + "_n" + text9 + "_n" + text10
-        val firebaseDb = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/messages")
-        val reference1 = firebaseDb.push()
+
+        val newChatMessage: MutableMap<String,Any> = HashMap()
+        newChatMessage["imagePath"] = ""
+        newChatMessage["fromId"] = fromId
+        newChatMessage["toId"] = toId
+        newChatMessage["text"] = fullText
+        newChatMessage["timeStamp"] = System.currentTimeMillis()/1000
+        db.collection("messages").add(newChatMessage).addOnSuccessListener { documentReference ->
+            Log.d("ChatLogActivity", "DocumentSnapshot written with ID: ${documentReference.id}")
+            addToActiveChats(fromId,toId)
+            //addToActiveChats(fromId, toId)
+            //addToActiveChats(toId, fromId)
+            val intent = Intent(this, ChatLogActivity::class.java)
+            intent.putExtra(NewMessageActivity.USER_KEY, user)
+            startActivity(intent)
+        }
+
+
+        //val firebaseDb = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/messages")
+        //val reference1 = firebaseDb.push()
         //val reference2 = firebaseDb.push()
         //val reference3 = firebaseDb.push()
         //val reference4 = firebaseDb.push()
 
-        val chatMessage1 = ChatLogActivity.ChatMessage(reference1?.key ?: "", fullText, null, fromId, toId, System.currentTimeMillis() / 1000)
+        //val chatMessage1 = ChatLogActivity.ChatMessage(reference1?.key ?: "", fullText, null, fromId, toId, System.currentTimeMillis() / 1000)
         //val chatMessage2 = ChatLogActivity.ChatMessage(reference2?.key ?: "", text2, null, fromId, toId, System.currentTimeMillis() / 1000)
         //val chatMessage3 = ChatLogActivity.ChatMessage(reference3?.key ?: "", text3, null, fromId, toId, System.currentTimeMillis() / 1000)
         //val chatMessage4 = ChatLogActivity.ChatMessage(reference4?.key ?: "", text4, null, fromId, toId, System.currentTimeMillis() / 1000)
-        reference1.setValue(chatMessage1)
+        /*reference1.setValue(chatMessage1)
             .addOnSuccessListener {
                 Log.d("ChatLogActivity", "Saved our chat message ${reference1.key}")
                 val intent = Intent(this, ChatLogActivity::class.java)
                 intent.putExtra(NewMessageActivity.USER_KEY, user)
                 startActivity(intent)
-            }
+            }*/
         /*reference2.setValue(chatMessage2)
             .addOnSuccessListener {
                 Log.d("ChatLogActivity", "Saved our chat message ${reference2.key}")
@@ -84,5 +109,19 @@ class RequestEmergency: AppCompatActivity() {
                 intent.putExtra(NewMessageActivity.USER_KEY, user)
                 startActivity(intent)
             } */
+    }
+
+    //add to the active chats of the user
+    private fun addToActiveChats(fromId : String, toId: String) {
+        //gets current user
+        val docRef = db.collection("users").document(fromId)
+        //find active chats of user, add the id if not existing already
+        docRef.get().addOnSuccessListener { user ->
+            val activeChats = user.data?.get("activeChats") as ArrayList<String>
+            if(!(activeChats.contains(toId))) activeChats.add(toId)
+            val data = hashMapOf("activeChats" to activeChats)
+            db.collection("users").document(fromId)
+                .set(data, SetOptions.merge())
+        }
     }
 }

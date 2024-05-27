@@ -14,6 +14,7 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_new_message.*
 import kotlinx.android.synthetic.main.user_row_new_message.view.*
 import android.content.ContentValues.TAG
+import java.util.ArrayList
 /*import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -24,6 +25,7 @@ import android.content.SharedPreferences*/
 
 class NewMessageActivity : AppCompatActivity() {
     private val db = Firebase.firestore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_message)
@@ -31,14 +33,14 @@ class NewMessageActivity : AppCompatActivity() {
 
         //adapter needed for the recycler view, will contain all the users
         val adapter = GroupAdapter<ViewHolder>()
-        getUsersFirestore(adapter)
+        val adapterActive = GroupAdapter<ViewHolder>()
 
         // GET shared pref
         val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
         val userRole = sharePref.getString("role", "defaultRole")!!
-        getCurrentUser()
+        getCurrentUser(adapterActive,adapter)
 
-        //open chat log when you click the adapter for the user
+        //open emergency log when you click the adapter for the new chat
         adapter.setOnItemClickListener { item, view ->
             val userItem = item as UserItem
 
@@ -51,19 +53,34 @@ class NewMessageActivity : AppCompatActivity() {
                 intent.putExtra(USER_KEY, userItem.user)
                 startActivity(intent)
             }
-
         }
-        recyclerview_newmessage.adapter = adapter
+
+        //open chat log when you click the adapter for the active chats
+        adapterActive.setOnItemClickListener { item, view ->
+            val userItem = item as UserItem
+            val intent = Intent(this, ChatLogActivity::class.java)
+            intent.putExtra(USER_KEY, userItem.user)
+            startActivity(intent)
+        }
+
+        recyclerview_newmessage2.adapter = adapter
+        recyclerview_newmessage1.adapter = adapterActive
     }
     companion object {
         val USER_KEY = "USER_KEY"
     }
 
-    private fun getCurrentUser(){
+    private fun getCurrentUser(adapterActive: GroupAdapter<ViewHolder>,adapter: GroupAdapter<ViewHolder>){
         val docRef = db.collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
         docRef.get()
             .addOnSuccessListener { document ->
                 val userRole = document.data?.get("role")
+                val activeChats = document.data?.get("activeChats") as ArrayList<String>
+
+                //fill the user lists
+                getActiveChats(adapterActive,activeChats)
+                getUsersFirestore(adapter,activeChats)
+
                 // Setting User Role Pref ...
                 val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
                 var editor = sharePref.edit()
@@ -78,7 +95,7 @@ class NewMessageActivity : AppCompatActivity() {
     }
 
     //displays list of users where role is Healthcare Professional to start a new chat
-    private fun getUsersFirestore(adapter: GroupAdapter<ViewHolder>) {
+    private fun getUsersFirestore(adapter: GroupAdapter<ViewHolder>,activeChats:ArrayList<String>) {
         db.collection("users")
             .whereEqualTo("role", "Healthcare Professional")
             .get()
@@ -91,7 +108,7 @@ class NewMessageActivity : AppCompatActivity() {
                     var user = User(uid.toString(),username.toString(),role.toString())
                     Log.d(TAG, "Creating User: " + user.username + " with uid " +  user.uid + " and role " + user.role)
                     //appends
-                    if (user.uid != FirebaseAuth.getInstance().currentUser?.uid) {
+                    if (user.uid != FirebaseAuth.getInstance().currentUser?.uid && !(activeChats.contains(user.uid))) {
                         adapter.add(UserItem(user))
                     }
 
@@ -100,6 +117,38 @@ class NewMessageActivity : AppCompatActivity() {
             .addOnFailureListener { exception ->
                 Log.w(TAG, "Error getting documents: ", exception)
             }
+    }
+
+    private fun getActiveChats(adapterActive: GroupAdapter<ViewHolder>, activeChats:ArrayList<String>) {
+        Log.d("ActiveChat", "Active chats")
+        for (item in activeChats) {
+            Log.d("ActiveChat", item)
+
+            db.collection("users")
+                .whereEqualTo("uid", item)
+                .get()
+                .addOnSuccessListener { users ->
+                    for (dbUser in users) {
+                        Log.d(TAG, "${dbUser.id} => ${dbUser.data}")
+                        var uid = dbUser.data?.get("uid")
+                        var username = dbUser.data?.get("username")
+                        var role = dbUser.data?.get("role")
+                        var user = User(uid.toString(),username.toString(),role.toString())
+                        Log.d(TAG, "Creating User: " + user.username + " with uid " +  user.uid + " and role " + user.role)
+                        //appends
+                        if (user.uid != FirebaseAuth.getInstance().currentUser?.uid) {
+                            adapterActive.add(UserItem(user))
+                        }
+
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.w(TAG, "Error getting documents: ", exception)
+                }
+
+
+
+        }
     }
 
     /*
