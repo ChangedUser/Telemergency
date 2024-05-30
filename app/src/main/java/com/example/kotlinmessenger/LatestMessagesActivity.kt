@@ -3,6 +3,7 @@ package com.example.kotlinmessenger
 import android.Manifest
 import android.app.Activity
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -44,6 +45,12 @@ class LatestMessagesActivity : AppCompatActivity() {
     private val locationPermissionCode = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
+        val userRole = sharePref.getString("role", "defaultRole")!!
+        if (userRole.toString() == "Patient") {
+            setTheme(R.style.Theme_TelemergencyPatient)
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_latest_messages)
         //verifies that the user is logged in before continuing further
@@ -345,16 +352,16 @@ class LatestMessagesActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item?.itemId) {
-            R.id.menu_new_message -> {
-                val intent = Intent(this, NewMessageActivity::class.java)
-                //intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-            }
-            R.id.menu_overview-> {
-                val intent = Intent(this, OverviewPage::class.java)
-                //intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-            }
+            // R.id.menu_new_message -> {
+            //     val intent = Intent(this, NewMessageActivity::class.java)
+            //     //intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+            //     startActivity(intent)
+            // }
+            // R.id.menu_overview-> {
+            //     val intent = Intent(this, OverviewPage::class.java)
+            //     //intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+            //     startActivity(intent)
+            // }
             R.id.menu_sign_out -> {
                 FirebaseAuth.getInstance().signOut()
                 val intent = Intent(this, MainActivity::class.java)

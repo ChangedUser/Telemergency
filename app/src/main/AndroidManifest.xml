@@ -54,11 +54,7 @@
 
 
         <activity android:name=".LoginActivity" />
-        <activity
-            android:name=".LineChartActivity"
-            android:exported="true">
-
-        </activity>
+        <activity android:name=".LineChartActivity" android:exported="true"/>
 
         <activity
             android:name=".OSMActivity"

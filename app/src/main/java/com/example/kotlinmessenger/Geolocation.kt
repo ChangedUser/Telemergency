@@ -3,6 +3,7 @@ package com.example.kotlinmessenger
 import android.Manifest
 import android.app.Activity
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -37,6 +38,12 @@ class Geolocation : AppCompatActivity() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
+        val userRole = sharePref.getString("role", "defaultRole")!!
+        if (userRole.toString() == "Patient") {
+            setTheme(R.style.Theme_TelemergencyPatient)
+        }
+
         super.onCreate(savedInstanceState)
 // GlobalScope.launch(Dispatchers.IO)
         //   {

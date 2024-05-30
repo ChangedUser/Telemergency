@@ -4,15 +4,19 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_osm.*
 import org.osmdroid.api.IMapController
 import org.osmdroid.bonuspack.kml.KmlDocument
@@ -34,6 +38,12 @@ class OSMActivity : AppCompatActivity() {
 
 
     override fun onCreate(@Nullable savedInstanceState: Bundle?) {
+        val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
+        val userRole = sharePref.getString("role", "defaultRole")!!
+        if (userRole.toString() == "Patient") {
+            setTheme(R.style.Theme_TelemergencyPatient)
+        }
+
         super.onCreate(savedInstanceState)
 
         //handle permissions first, before map is created. not depicted here
@@ -76,6 +86,23 @@ class OSMActivity : AppCompatActivity() {
             }
         }
         map?.overlays?.add(mMyLocationOverlay)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.nav_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item?.itemId) {
+            R.id.menu_sign_out -> {
+                FirebaseAuth.getInstance().signOut()
+                val intent = Intent(this, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     public override fun onResume() {

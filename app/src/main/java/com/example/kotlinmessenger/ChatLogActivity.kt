@@ -8,6 +8,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.example.kotlinmessenger.webrtc.Constants
 import com.example.kotlinmessenger.webrtc.RTCActivity
@@ -38,6 +40,12 @@ class ChatLogActivity : AppCompatActivity() {
     val adapter = GroupAdapter<ViewHolder>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
+        val userRole = sharePref.getString("role", "defaultRole")!!
+        if (userRole.toString() == "Patient") {
+            setTheme(R.style.Theme_TelemergencyPatient)
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_log)
         user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
@@ -120,6 +128,23 @@ class ChatLogActivity : AppCompatActivity() {
              */
 
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.nav_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item?.itemId) {
+            R.id.menu_sign_out -> {
+                FirebaseAuth.getInstance().signOut()
+                val intent = Intent(this, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     //send message with sender id, receiver id, text and timestamp

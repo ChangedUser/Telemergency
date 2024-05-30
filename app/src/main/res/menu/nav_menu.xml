@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/menu_new_message"
+    <item
+        android:id="@+id/menu_new_message"
+        android:enabled="false"
         android:title="New Message"
-        app:showAsAction="ifRoom"/>
-    <item android:id="@+id/menu_overview"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_overview"
+        android:enabled="false"
         android:title="Overview"
-        app:showAsAction="ifRoom"/>
+        android:visible="false"
+        app:showAsAction="ifRoom" />
     <item android:id="@+id/menu_sign_out"
         android:title="Sign Out"
         app:showAsAction="ifRoom"/>

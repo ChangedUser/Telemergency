@@ -32,12 +32,12 @@ class MainActivity : AppCompatActivity() {
     var role = "Patient";
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.i("BUTTON_SETTER", " MAIN ACTIVITY CALLED")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         radioGroup = findViewById(R.id.radioGroup);
 
-      FirebaseMessaging.getInstance().subscribeToTopic("bpmAlert")
-
+        FirebaseMessaging.getInstance().subscribeToTopic("bpmAlert")
 
         register_button_register.setOnClickListener {
             val email = email_edittext_registration.text.toString()
@@ -69,22 +69,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
-
-    /*private fun saveUserToFirebaseDatabase(uid : String){
-        val user = User(uid, username_edittext_registration.text.toString(), role)
-        val mDbRef = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/users/$uid")
-        mDbRef.setValue(user)
-            .addOnSuccessListener {
-                Log.d("MainActivity", "User saved to database")
-                //user created, go to messages screen
-                val intent = Intent(this, LatestMessagesActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to register user: ${it.message}", Toast.LENGTH_LONG).show()
-            }
-    }*/
 
     //saves the created user to firestore
     private fun saveUserToFirestoreDatabase(uid : String, username: String, role: String, email: String){

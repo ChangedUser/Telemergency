@@ -14,6 +14,8 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_new_message.*
 import kotlinx.android.synthetic.main.user_row_new_message.view.*
 import android.content.ContentValues.TAG
+import android.view.Menu
+import android.view.MenuItem
 import java.util.ArrayList
 /*import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -27,6 +29,12 @@ class NewMessageActivity : AppCompatActivity() {
     private val db = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
+        val userRole = sharePref.getString("role", "defaultRole")!!
+        if (userRole.toString() == "Patient") {
+            setTheme(R.style.Theme_TelemergencyPatient)
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_message)
         supportActionBar?.title = "Select User"
@@ -35,9 +43,6 @@ class NewMessageActivity : AppCompatActivity() {
         val adapter = GroupAdapter<ViewHolder>()
         val adapterActive = GroupAdapter<ViewHolder>()
 
-        // GET shared pref
-        val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
-        val userRole = sharePref.getString("role", "defaultRole")!!
         getCurrentUser(adapterActive,adapter)
 
         //open emergency log when you click the adapter for the new chat
@@ -66,6 +71,22 @@ class NewMessageActivity : AppCompatActivity() {
         recyclerview_newmessage2.adapter = adapter
         recyclerview_newmessage1.adapter = adapterActive
     }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.nav_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item?.itemId) {
+            R.id.menu_sign_out -> {
+                FirebaseAuth.getInstance().signOut()
+                val intent = Intent(this, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
     companion object {
         val USER_KEY = "USER_KEY"
     }
@@ -82,6 +103,7 @@ class NewMessageActivity : AppCompatActivity() {
                 getUsersFirestore(adapter,activeChats)
 
                 // Setting User Role Pref ...
+                // TODO - potentially not needed?
                 val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
                 var editor = sharePref.edit()
                 editor.remove("role")

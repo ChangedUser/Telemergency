@@ -1,8 +1,12 @@
 package com.example.kotlinmessenger
 
+import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -20,10 +24,18 @@ class RequestEmergency: AppCompatActivity() {
     private val db = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
+        val userRole = sharePref.getString("role", "defaultRole")!!
+        if (userRole.toString() == "Patient") {
+            setTheme(R.style.Theme_TelemergencyPatient)
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.emergency_call)
         user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
         fromId = FirebaseAuth.getInstance().uid ?: ""
+        loadInformation()
+
 
         send_request_button.setOnClickListener {
             val name = form_name.text.toString()
@@ -40,6 +52,40 @@ class RequestEmergency: AppCompatActivity() {
         }
     }
 
+    private fun loadInformation() {
+        val docRef = Firebase.firestore.collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
+        docRef.get()
+            .addOnSuccessListener { document ->
+                this.form_name.setText(document.data?.get("name")?.toString().orEmpty())
+                this.form_phone.setText(document.data?.get("phone")?.toString().orEmpty())
+                this.form_address.setText(document.data?.get("address")?.toString().orEmpty())
+                this.form_blood.setText(document.data?.get("blood")?.toString().orEmpty())
+                this.form_allergies.setText(document.data?.get("allergies")?.toString().orEmpty())
+                this.form_illnesses.setText(document.data?.get("illnesses")?.toString().orEmpty())
+
+            }
+            .addOnFailureListener { exception ->
+                Log.d(ContentValues.TAG, " DID NOT RECIEVE USER INFORMATION: ", exception)
+            }
+
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.nav_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item?.itemId) {
+            R.id.menu_sign_out -> {
+                FirebaseAuth.getInstance().signOut()
+                val intent = Intent(this, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
     private fun performSendMessage(name: String, phone: String, address: String, blood: String, allergies: String, illnesses: String,
     currentAddress: String, someoneHurt: String, whatHappened: String, needed: String, fromId: String, toId: String) {
         val text1 = "Patient: " + name
@@ -70,45 +116,6 @@ class RequestEmergency: AppCompatActivity() {
             startActivity(intent)
         }
 
-
-        //val firebaseDb = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/messages")
-        //val reference1 = firebaseDb.push()
-        //val reference2 = firebaseDb.push()
-        //val reference3 = firebaseDb.push()
-        //val reference4 = firebaseDb.push()
-
-        //val chatMessage1 = ChatLogActivity.ChatMessage(reference1?.key ?: "", fullText, null, fromId, toId, System.currentTimeMillis() / 1000)
-        //val chatMessage2 = ChatLogActivity.ChatMessage(reference2?.key ?: "", text2, null, fromId, toId, System.currentTimeMillis() / 1000)
-        //val chatMessage3 = ChatLogActivity.ChatMessage(reference3?.key ?: "", text3, null, fromId, toId, System.currentTimeMillis() / 1000)
-        //val chatMessage4 = ChatLogActivity.ChatMessage(reference4?.key ?: "", text4, null, fromId, toId, System.currentTimeMillis() / 1000)
-        /*reference1.setValue(chatMessage1)
-            .addOnSuccessListener {
-                Log.d("ChatLogActivity", "Saved our chat message ${reference1.key}")
-                val intent = Intent(this, ChatLogActivity::class.java)
-                intent.putExtra(NewMessageActivity.USER_KEY, user)
-                startActivity(intent)
-            }*/
-        /*reference2.setValue(chatMessage2)
-            .addOnSuccessListener {
-                Log.d("ChatLogActivity", "Saved our chat message ${reference2.key}")
-                //val intent = Intent(this, ChatLogActivity::class.java)
-                //intent.putExtra(NewMessageActivity.USER_KEY, user)
-                //startActivity(intent)
-            }
-        reference3.setValue(chatMessage3)
-            .addOnSuccessListener {
-                Log.d("ChatLogActivity", "Saved our chat message ${reference3.key}")
-                //val intent = Intent(this, ChatLogActivity::class.java)
-                //intent.putExtra(NewMessageActivity.USER_KEY, user)
-                //startActivity(intent)
-            }
-        reference4.setValue(chatMessage4)
-            .addOnSuccessListener {
-                Log.d("ChatLogActivity", "Saved our chat message ${reference4.key}")
-                val intent = Intent(this, ChatLogActivity::class.java)
-                intent.putExtra(NewMessageActivity.USER_KEY, user)
-                startActivity(intent)
-            } */
     }
 
     //add to the active chats of the user

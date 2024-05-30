@@ -7,7 +7,6 @@
     android:background="#85E3FDF5"
     tools:context=".LineChartActivity" >
 
-
     <com.github.mikephil.charting.charts.LineChart
         android:layout_width="match_parent"
         android:layout_height="match_parent"

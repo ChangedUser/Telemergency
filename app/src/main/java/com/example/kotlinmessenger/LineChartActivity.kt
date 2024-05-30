@@ -1,10 +1,14 @@
 package com.example.kotlinmessenger
 
 import android.content.ContentValues.TAG
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.github.mikephil.charting.components.XAxis
@@ -13,8 +17,10 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.line_chart.*
 import kotlinx.android.synthetic.main.line_chart.view.*
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -30,6 +36,12 @@ class LineChartActivity: AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
+        val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
+        val userRole = sharePref.getString("role", "defaultRole")!!
+        if (userRole.toString() == "Patient") {
+            setTheme(R.style.Theme_TelemergencyPatient)
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.line_chart)
         mHandler = Handler()
@@ -39,6 +51,22 @@ class LineChartActivity: AppCompatActivity() {
 
         //setLineChartData()
 
+    }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.nav_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item?.itemId) {
+            R.id.menu_sign_out -> {
+                FirebaseAuth.getInstance().signOut()
+                val intent = Intent(this, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     fun setLineChartData(lineentrybpm: ArrayList<Entry> )
@@ -69,8 +97,7 @@ class LineChartActivity: AppCompatActivity() {
         lineChart.xAxis.valueFormatter = LineChartXAxisValueFormatter(min.toLong())
 
         /*var mv : MyMarkerView  = MyMarkerView(this, R.layout.marker_view, min.toLong())
-        lineChart.marker = mv
-*/
+        lineChart.marker = mv */
         //lineChart.animateXY(3000, 3000)
         lineChart.invalidate()
 
