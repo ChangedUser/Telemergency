@@ -14,6 +14,7 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_chat_log.*
+import kotlinx.android.synthetic.main.activity_profile.illness_container
 import kotlinx.android.synthetic.main.emergency_call.*
 import java.util.ArrayList
 import java.util.HashMap
@@ -52,6 +53,23 @@ class RequestEmergency: AppCompatActivity() {
         }
     }
 
+    private fun loadCheckboxInformation(map: Map<String, String>): String {
+        var ret: String= ""
+        var count = 0
+
+        for (item in map){
+            if (count == map.size -1) {
+                ret += item.value.toString()
+            }else {
+                ret += item.value.toString() + ", "
+
+            }
+            count ++
+        }
+
+        return ret
+    }
+
     private fun loadInformation() {
         val docRef = Firebase.firestore.collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
         docRef.get()
@@ -59,9 +77,18 @@ class RequestEmergency: AppCompatActivity() {
                 this.form_name.setText(document.data?.get("name")?.toString().orEmpty())
                 this.form_phone.setText(document.data?.get("phone")?.toString().orEmpty())
                 this.form_address.setText(document.data?.get("address")?.toString().orEmpty())
-                this.form_blood.setText(document.data?.get("blood")?.toString().orEmpty())
-                this.form_allergies.setText(document.data?.get("allergies")?.toString().orEmpty())
-                this.form_illnesses.setText(document.data?.get("illnesses")?.toString().orEmpty())
+                this.form_blood.setText(document.data?.get("bloodtype")?.toString().orEmpty())
+
+
+                if (document.data?.get("allergies") != null) {
+                    this.form_allergies.setText(loadCheckboxInformation(document.data?.get("allergies") as Map<String, String>))
+                }
+                if (document.data?.get("illnesses") != null) {
+                    this.form_illnesses.setText(loadCheckboxInformation(document.data?.get("illnesses") as Map<String, String>))
+                }
+                if (document.data?.get("drugs") != null) {
+                    this.form_drugs.setText(loadCheckboxInformation(document.data?.get("drugs") as Map<String, String>))
+                }
 
             }
             .addOnFailureListener { exception ->
@@ -77,6 +104,11 @@ class RequestEmergency: AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item?.itemId) {
+            R.id.menu_overview-> {
+                val intent = Intent(this, OverviewPage::class.java)
+                //intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            }
             R.id.menu_sign_out -> {
                 FirebaseAuth.getInstance().signOut()
                 val intent = Intent(this, MainActivity::class.java)

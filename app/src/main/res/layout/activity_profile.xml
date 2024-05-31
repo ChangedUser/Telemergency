@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".ProfileActivity">
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical">
+
+    <!-- Profile Picture -->
+    <ImageView
+        android:id="@+id/avatar_button"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:background="?attr/selectableItemBackground"
+        android:scaleType="centerCrop"
+        android:layout_margin="8dp"/>
+        <!-- android:contentDescription="@string/profile_picture"
+        android:src="@drawable/ic_profile_placeholder" -->
+
+
+    <!-- General Information Section -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="General Information"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/username_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="8dp"
+        android:hint="Username"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/name__field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Name"
+        android:inputType="text"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/mail__field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/birth_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Date of Birth"
+        android:inputType="date"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/phone_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="8dp"
+        android:hint="Phone"
+        android:inputType="phone" />
+
+    <EditText
+        android:id="@+id/address_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="8dp"
+        android:hint="Address"
+        android:inputType="textPostalAddress" />
+
+    <EditText
+        android:id="@+id/role__field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Role"
+        android:inputType="text"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Medical Information Section -->
+    <TextView
+        android:id="@+id/medical_info_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="8dp"
+        android:text="Medical Information"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/blood_type_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Blood Type"
+        android:inputType="text"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- <EditText
+        android:id="@+id/allergies_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Allergies"
+        android:inputType="textMultiLine"
+        android:lines="3"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="8dp"/> -->
+
+    <!-- Allergies Section -->
+    <!-- <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Allergies"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/> -->
+
+    <Button
+        android:id="@+id/show_allergies"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Allergies"
+        android:visibility="visible" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_allergies"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:fillViewport="true"
+        android:visibility="gone"
+        tools:visibility="gone">
+
+      <LinearLayout
+          android:id="@+id/allergies_container"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="8dp"
+          android:orientation="vertical"
+          android:visibility="visible" />
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- <EditText
+        android:id="@+id/drug_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Drug Intolerances"
+        android:inputType="textMultiLine"
+        android:lines="3"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="8dp"/> -->
+
+    <Button
+        android:id="@+id/show_drugs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Drugs"
+        android:visibility="visible" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_drugs"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:fillViewport="true"
+        android:visibility="gone"
+        tools:visibility="gone">
+
+      <LinearLayout
+          android:id="@+id/drugs_container"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="8dp"
+          android:orientation="vertical"
+          android:visibility="visible" />
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- <EditText
+        android:id="@+id/illness_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Illnesses"
+        android:inputType="textMultiLine"
+        android:lines="3"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="16dp"/> -->
+
+    <Button
+        android:id="@+id/show_illness"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Illnesses"
+        android:visibility="visible" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_ilnesses"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:fillViewport="true"
+        android:visibility="gone"
+        tools:visibility="gone">
+
+      <LinearLayout
+          android:id="@+id/illness_container"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="8dp"
+          android:orientation="vertical"
+          android:visibility="visible" />
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Last Active Chat Section -->
+    <!--
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Last Active Chat"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/last_msg_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="?attr/selectableItemBackground"
+        android:padding="8dp"
+        android:text="Chat details will appear here"
+        android:layout_marginTop="15dp"
+        android:layout_margin="8dp"/>
+        -->
+
+    <Button
+        android:id="@+id/geolocation"
+        android:layout_width="300dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="15dp"
+        android:layout_gravity="center"
+        android:text="location"
+        tools:ignore="MissingConstraints" />
+
+
+    <Button
+        android:id="@+id/edit_profile_btn"
+        android:layout_width="300dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:text="Save" />
+
+
+  </LinearLayout>
+
+</ScrollView>

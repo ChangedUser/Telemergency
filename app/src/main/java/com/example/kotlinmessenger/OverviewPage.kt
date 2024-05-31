@@ -1,10 +1,8 @@
 package com.example.kotlinmessenger
 
-import android.content.ContentValues
+import android.content.ClipData.Item
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -17,7 +15,6 @@ import com.google.firebase.ktx.Firebase
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_overview_page.*
-import java.util.ArrayList
 
 class OverviewPage : AppCompatActivity() {
     private val db = Firebase.firestore
@@ -38,12 +35,17 @@ class OverviewPage : AppCompatActivity() {
 
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.nav_menu, menu)
+        menuInflater.inflate(R.menu.nav_menu_overview, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item?.itemId) {
+            // R.id.menu_overview-> {
+            //     val intent = Intent(this, OverviewPage::class.java)
+            //     //intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+            //     startActivity(intent)
+            // }
             R.id.menu_sign_out -> {
                 FirebaseAuth.getInstance().signOut()
                 val intent = Intent(this, MainActivity::class.java)
@@ -68,7 +70,7 @@ class OverviewPage : AppCompatActivity() {
             }
 
             button_profile.setOnClickListener {
-                val intent = Intent(this, LatestMessagesActivity::class.java)
+                val intent = Intent(this, ProfileActivity::class.java)
                 startActivity(intent)
             }
 
@@ -84,7 +86,7 @@ class OverviewPage : AppCompatActivity() {
             }
 
             button_profile.setOnClickListener {
-                val intent = Intent(this, LatestMessagesActivity::class.java)
+                val intent = Intent(this, ProfileActivity::class.java)
                 startActivity(intent)
             }
         }

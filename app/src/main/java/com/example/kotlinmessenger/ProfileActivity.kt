@@ -13,29 +13,35 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.CheckBox
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.view.forEach
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
+import androidx.core.view.iterator
+import com.example.kotlinmessenger.icdapi.ICDAPI
 import com.example.kotlinmessenger.icdapi.ICDAPIclient
-import com.example.kotlinmessenger.icdapi.ICDAPIclient.*
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
+import com.google.api.Distribution.BucketOptions.Linear
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_latest_messages.*
+import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.*
 
 //first activity after you log in, profile
-class LatestMessagesActivity : AppCompatActivity() {
+class ProfileActivity : AppCompatActivity() {
     private val db = Firebase.firestore
     private var selectedPhotoUri: Uri? = null
     var photoChanged = false
@@ -52,15 +58,14 @@ class LatestMessagesActivity : AppCompatActivity() {
         }
 
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_latest_messages)
+        // setContentView(R.layout.activity_latest_messages)
+        setContentView(R.layout.activity_profile)
         //verifies that the user is logged in before continuing further
+        // TODO - Should we verify in each activity?
         verifyUserIsLoggedIn()
         val uid = FirebaseAuth.getInstance().currentUser!!.uid
 
-        Log.d(TAG, "We be loading my API!") //document
-        val client = ICDAPIclient();
-        client.testAPI();
-        Log.d(TAG, "API Should have loaded") //document
+
 
         //finds the currently logged user in the firestore db
         val docRef = db.collection("users").document(uid)
@@ -75,6 +80,9 @@ class LatestMessagesActivity : AppCompatActivity() {
                     val avatar = document.data?.get("avatar")
                     val birthdate = document.data?.get("birthdate")
                     val name = document.data?.get("name")
+                    val bloodtype = document.data?.get("bloodtype")
+                    val phone = document.data?.get("phone")
+                    val address = document.data?.get("address")
 
                     //val activeChats = document.data?.get("activeChats") as ArrayList<String>
 
@@ -85,27 +93,26 @@ class LatestMessagesActivity : AppCompatActivity() {
                     if(email!=null) mail__field.setText(email.toString())
                     if(birthdate!=null) birth_field.setText(birthdate.toString())
                     if(name!=null) name__field.setText(name.toString())
+                    if(phone!=null) phone_field.setText(phone.toString())
+                    if(address!=null) address_field.setText(address.toString())
 
-                    //get last active user in chat
-                   /* val lastUser = activeChats.get(activeChats.size-1)
-                    getLastChatUser(lastUser)
-*/
                     //hide fields if role is healthcare professional
                     if (role == "Healthcare Professional") {
-                        evaluate_emergency_btn.setVisibility(View.INVISIBLE)
-                        allergies_field.setVisibility(View.INVISIBLE)
-                        allergies_textfield.setVisibility(View.INVISIBLE)
-                        drug_field.setVisibility(View.INVISIBLE)
-                        drug_textfield.setVisibility(View.INVISIBLE)
-                        illness__textfield.setVisibility(View.INVISIBLE)
-                        illness_field.setVisibility(View.INVISIBLE)
-                    } else { //fill fields if role is Patient
-                        val allergies = document.data?.get("allergies")
-                        val drugs = document.data?.get("drugs")
-                        val illnesses = document.data?.get("illnesses")
-                        allergies_field.setText(allergies.toString())
-                        drug_field.setText(drugs.toString())
-                        illness_field.setText(illnesses.toString())
+                        show_allergies.setVisibility(View.GONE)
+                        show_drugs.setVisibility(View.GONE)
+                        show_illness.setVisibility(View.GONE)
+                        medical_info_field.setVisibility(View.GONE)
+                        blood_type_field.setVisibility(View.GONE)
+                    } else {
+                        val db_ret_allergies = document.data?.get("allergies") as Map<String, String>
+                        val db_ret_drugs = document.data?.get("drugs") as Map<String, String>
+                        val db_ret_illnesses = document.data?.get("illnesses") as Map<String, String>
+
+                        if(bloodtype!=null) blood_type_field.setText(bloodtype.toString())
+                        fillCheckboxes(db_ret_allergies,0, R.id.allergies_container)
+                        fillCheckboxes(db_ret_illnesses, 1, R.id.illness_container)
+                        fillCheckboxes(db_ret_drugs, 2, R.id.drugs_container)
+
                     }
                 } else {
                     Log.d(TAG, "No such user")
@@ -118,68 +125,35 @@ class LatestMessagesActivity : AppCompatActivity() {
                 Log.d(TAG, "get failed with ", exception)
             }
 
-        /*
-        getLastCallForUser()
-        val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
-        val sendFrom = sharePref.getString("last_message_send_from", "defaultFrom")!!
-
-        // instead of Get it rather sets these users but oh well
-        getUserByUID(FirebaseAuth.getInstance().currentUser!!.uid, "current_user")
-        getUserByUID(sendFrom, "send_from_user")
-
-        val loggedInUserID = sharePref.getString("current_user_id", "defaultFrom")!!
-        val loggedInUserRole = sharePref.getString("current_user_role", "defaultFrom")!!
-        val loggedInUserUserName = sharePref.getString("current_user_username", "defaultFrom")!!
-        val mainUser = User(loggedInUserID, loggedInUserRole, loggedInUserUserName)
-
-        if (loggedInUserRole != null) {
-            role__field.setText(loggedInUserRole)
-        }
-
-        if (loggedInUserUserName != null) {
-            username_field.setText(loggedInUserUserName)
-        }
-
-        if (loggedInUserRole == "Healthcare Professional") {
-            // do something
-            evaluate_emergency_btn.setVisibility(View.INVISIBLE)
-            allergies_field.setVisibility(View.INVISIBLE)
-            allergies_textfield.setVisibility(View.INVISIBLE)
-            drug_field.setVisibility(View.INVISIBLE)
-            drug_textfield.setVisibility(View.INVISIBLE)
-            illness__textfield.setVisibility(View.INVISIBLE)
-            illness_field.setVisibility(View.INVISIBLE)
-
-        }
-
-        val sendID = sharePref.getString("send_from_user_id", "defaultFrom")!!
-        val sendRole = sharePref.getString("send_from_user_role", "defaultFrom")!!
-        val sendUsername = sharePref.getString("send_from_user_username", "defaultFrom")!!
-        val sendUser = User(sendID, sendRole, sendUsername)
-        if (sendUsername != null) {
-            last_msg_field.setText(sendUsername)
-        }
-
-        evaluate_emergency_btn.setOnClickListener {
-            val intent = Intent(this@LatestMessagesActivity, RequestEmergency::class.java)
-            // intent.putExtra("meetingID",meeting_id.text.toString())
-            // intent.putExtra("isJoin",false)
-            startActivity(intent)
-        }
-
-        last_msg_field.setOnClickListener {
-            if (sendUser != null) {
-                val intent = Intent(this, ChatLogActivity::class.java)
-                intent.putExtra(NewMessageActivity.USER_KEY, sendUser)
-                startActivity(intent)
-            }
-        }*/
-
         //button for selecting avatar
         avatar_button.setOnClickListener{
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
             startActivityForResult(intent,0) //method starts selecting the photo
+        }
+
+        show_allergies.setOnClickListener{
+            if (scroll_allergies.isGone){
+                scroll_allergies.isGone = false
+            }else  {
+                scroll_allergies.isGone = true
+            }
+        }
+
+        show_drugs.setOnClickListener{
+            if (scroll_drugs.isGone){
+                scroll_drugs.isGone = false
+            }else  {
+                scroll_drugs.isGone = true
+            }
+        }
+
+        show_illness.setOnClickListener{
+            if (scroll_ilnesses.isGone){
+                scroll_ilnesses.isGone = false
+            }else  {
+                scroll_ilnesses.isGone = true
+            }
         }
 
         edit_profile_btn.setOnClickListener {
@@ -190,10 +164,10 @@ class LatestMessagesActivity : AppCompatActivity() {
             }
         }
 
-        bpmbutton.setOnClickListener {
-            val intent = Intent(this, LineChartActivity::class.java)
-            startActivity(intent)
-        }
+        // bpmbutton.setOnClickListener {
+        //     val intent = Intent(this, LineChartActivity::class.java)
+        //     startActivity(intent)
+        // }
 
         geolocation.setOnClickListener{
            // val intent = Intent(this, GeoLocation::class.java)
@@ -203,15 +177,15 @@ class LatestMessagesActivity : AppCompatActivity() {
 
 
             GlobalScope.launch(Dispatchers.IO) {
-            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this@LatestMessagesActivity)
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this@ProfileActivity)
                 //tvlatitude = findViewById(R.id.latitude)
 
 
             if (ActivityCompat.checkSelfPermission(
-                    this@LatestMessagesActivity,
+                    this@ProfileActivity,
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    this@LatestMessagesActivity,
+                    this@ProfileActivity,
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
@@ -225,7 +199,7 @@ class LatestMessagesActivity : AppCompatActivity() {
 
             }
             fusedLocationProviderClient.lastLocation
-                .addOnCompleteListener(this@LatestMessagesActivity) { task ->
+                .addOnCompleteListener(this@ProfileActivity) { task ->
                     var location: Location? = task.result
                     var loc = hashMapOf<String, String>()
 
@@ -248,6 +222,43 @@ class LatestMessagesActivity : AppCompatActivity() {
 
     }
 
+    private fun fillCheckboxes(map: Map<String, String>, type: Int, container: Int) {
+        val client = ICDAPI();
+
+        GlobalScope.launch {
+            var res = mapOf<String, String>()
+            // Allergies
+            if (type == 0) {
+                res = client.getAllergens()
+                // Illnesses
+            }else if (type == 1){
+                res = client.getIllnessess()
+            }else {
+                res = client.getDrugs()
+            }
+
+            for (item in res) {
+                var cb_checked = false
+                if (map.containsKey(item.key)) {
+                    cb_checked = true
+                }
+                val checkBox = CheckBox(this@ProfileActivity).apply {
+                    text = item.value
+                    tag = item.key
+                    // value = allergy.key
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
+                    isChecked = cb_checked
+                }
+                findViewById<LinearLayout>(container).addView(checkBox)
+                // allergies_container.addView(checkBox)
+            }
+        }
+    }
+
+
     //selects the photo
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -260,80 +271,6 @@ class LatestMessagesActivity : AppCompatActivity() {
             photoChanged = true
         }
     }
-
-    /*private fun getLastCallForUser(){
-        val ref = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/messages")
-            .orderByChild("/timeStamp")
-        // .limitToLast(3)
-        ref.addListenerForSingleValueEvent(object: ValueEventListener {
-            override fun onCancelled(error: DatabaseError) {
-            }
-            override fun onDataChange(snapshot: DataSnapshot) {
-                var arrayMessages = arrayOf<Message?>()
-                var currentuser=  FirebaseAuth.getInstance().currentUser
-                // Log.i("Debugging user", currentuser!!.uid)
-                snapshot.children.forEach{
-                    val message = it.getValue(Message::class.java)
-                    if (message!!.toId == currentuser!!.uid) {
-                        val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
-                        var editor = sharePref.edit()
-                        editor.remove("last_message_send_from")
-                        editor.remove("last_message_send_text")
-                        editor.remove("last_message_send_id")
-                        // editor.putString("role", snapshot.getValue().toString())
-                        editor.putString("last_message_send_from", message!!.fromId)
-                        editor.putString("last_message_send_text", message!!.text)
-                        editor.putString("last_message_send_id", message!!.id)
-                        editor.commit()
-
-                    }
-
-                }
-
-
-            }
-        })
-    } */
-
-    /*private fun getUserByUID(uid: String, user_type: String){
-        // val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
-        // val sendFrom = sharePref.getString("last_message_send_from", "defaultFrom")!!
-
-        val ref = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/users")
-
-        ref.addListenerForSingleValueEvent(object: ValueEventListener{
-            override fun onCancelled(error: DatabaseError) {
-            }
-            override fun onDataChange(snapshot: DataSnapshot) {
-                snapshot.children.forEach{
-                    // Log.d("NewMessageActivity", it.toString())
-                    val user = it.getValue(User::class.java)
-                    //checks that user is not null and not the one logged in
-
-                    if (user!=null && user.uid == uid) {
-                        // userRole = user.role
-                        // Setting User Role Pref ...
-                        val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
-                        var editor = sharePref.edit()
-                        var temp_id =  user_type + "_id"
-                        var temp_role =  user_type + "_role"
-                        var temp_username =  user_type + "_username"
-                        editor.remove(temp_id)
-                        editor.remove(temp_role)
-                        editor.remove(temp_username)
-
-                        editor.putString(temp_id, user.uid)
-                        editor.putString(temp_role, user.role)
-                        editor.putString(temp_username , user.username)
-                        editor.commit()
-                    }
-                }
-            }
-        })
-
-
-    }
- */
 
     //verify is user is logged in, otherwise go to register screen
     private fun verifyUserIsLoggedIn(){
@@ -357,11 +294,11 @@ class LatestMessagesActivity : AppCompatActivity() {
             //     //intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
             //     startActivity(intent)
             // }
-            // R.id.menu_overview-> {
-            //     val intent = Intent(this, OverviewPage::class.java)
-            //     //intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-            //     startActivity(intent)
-            // }
+            R.id.menu_overview-> {
+                val intent = Intent(this, OverviewPage::class.java)
+                //intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            }
             R.id.menu_sign_out -> {
                 FirebaseAuth.getInstance().signOut()
                 val intent = Intent(this, MainActivity::class.java)
@@ -393,20 +330,25 @@ class LatestMessagesActivity : AppCompatActivity() {
         val email = mail__field.text.toString()
         val role = role__field.text.toString()
         val birthdate = birth_field.text.toString()
+        val phone = phone_field.text.toString()
+        val address = address_field.text.toString()
 
         val user: MutableMap<String,Any> = HashMap()
         if (username != "") user["username"] = username
         if (name != "") user["name"] = name
         if (birthdate != "") user["birthdate"] = birthdate
+        if (phone!= "") user["phone"] = phone
+        if (address!= "") user["address"] = address
         //extra fields for patient
         if (role == "Patient") {
-            val allergies = allergies_field.text.toString()
-            val drugs = drug_field.text.toString()
-            val illnesses = illness_field.text.toString()
-            if (allergies != "") user["allergies"] = allergies
-            if (drugs != "") user["drugs"] = drugs
-            if (illnesses != "") user["illnesses"] = illnesses
+            val bloodtype = blood_type_field.text.toString()
+            if (bloodtype!= "") user["bloodtype"] = bloodtype
+
+            user["allergies"] = createCBContent(R.id.allergies_container)
+            user["drugs"] = createCBContent(R.id.drugs_container)
+            user["illnesses"] = createCBContent(R.id.illness_container)
         }
+
         user["avatar"] = avatar
         user["email"] = email
         user["role"] = role
@@ -429,19 +371,23 @@ class LatestMessagesActivity : AppCompatActivity() {
         val email = mail__field.text.toString()
         val role = role__field.text.toString()
         val birthdate = birth_field.text.toString()
+        val phone = phone_field.text.toString()
+        val address = address_field.text.toString()
 
         val user: MutableMap<String,Any> = HashMap()
         if (username != "") user["username"] = username
         if (name != "") user["name"] = name
         if (birthdate != "") user["birthdate"] = birthdate
+        if (phone!= "") user["phone"] = phone
+        if (address!= "") user["address"] = address
         //extra fields for patient
         if (role == "Patient") {
-            val allergies = allergies_field.text.toString()
-            val drugs = drug_field.text.toString()
-            val illnesses = illness_field.text.toString()
-            if (allergies != "") user["allergies"] = allergies
-            if (drugs != "") user["drugs"] = drugs
-            if (illnesses != "") user["illnesses"] = illnesses
+            val bloodtype = blood_type_field.text.toString()
+            if (bloodtype!= "") user["bloodtype"] = bloodtype
+
+            user["allergies"] = createCBContent(R.id.allergies_container)
+            user["drugs"] = createCBContent(R.id.drugs_container)
+            user["illnesses"] = createCBContent(R.id.illness_container)
         }
         user["email"] = email
         user["role"] = role
@@ -461,22 +407,42 @@ class LatestMessagesActivity : AppCompatActivity() {
         Picasso.get().load(imagePath).resize(140, 140).centerCrop().into(avatar_button)
     }
 
-    //finds the user from the id provided and writes it in the field
-    private fun getLastChatUser(lastUserId: String) {
-        Log.d(TAG, "Last user id is " + lastUserId)
-        val docRef = db.collection("users").document(lastUserId)
-        docRef.get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    Log.d(TAG, "DocumentSnapshot data: ${document.data}") //document
-                    val username = document.data?.get("username")
-                    //val name = document.data?.get("name")
-                    last_msg_field.setText(username.toString()) //fills field with the last user's username
-                } else {
-                    Log.d(TAG, "getLastChatUser: No such user")
+    private fun createCBContent(r_id: Int): Map<String, String> {
+        // var layout = findViewById<LinearLayout>(R.id.allergies_container)
+        var layout = findViewById<LinearLayout>(r_id)
+        val map = mutableMapOf<String, String>()
+
+        for (i in 0 until layout.childCount) {
+            val child = layout.getChildAt(i)
+            if (child is CheckBox) {
+                if (child.isChecked){
+                    // Log.i("CB_SELECTED", "ITEM " +child.text.toString() +  " HAS BEEN SELECTED" );
+                    map.put(child.tag.toString()  , child.text.toString())
                 }
+
             }
+        }
+        return map
     }
+
+
+    //finds the user from the id provided and writes it in the field
+    // DEPR.
+    // private fun getLastChatUser(lastUserId: String) {
+    //     Log.d(TAG, "Last user id is " + lastUserId)
+    //     val docRef = db.collection("users").document(lastUserId)
+    //     docRef.get()
+    //         .addOnSuccessListener { document ->
+    //             if (document != null) {
+    //                 Log.d(TAG, "DocumentSnapshot data: ${document.data}") //document
+    //                 val username = document.data?.get("username")
+    //                 //val name = document.data?.get("name")
+    //                 last_msg_field.setText(username.toString()) //fills field with the last user's username
+    //             } else {
+    //                 Log.d(TAG, "getLastChatUser: No such user")
+    //             }
+    //         }
+    // }
 
 
 }

@@ -9,13 +9,16 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.kotlinmessenger.icdapi.ICDAPI
+import com.example.kotlinmessenger.icdapi.ICDAPIclient
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.sql.Timestamp
 import java.util.HashMap
 //import com.google.firebase.database.FirebaseDatabase
@@ -38,6 +41,12 @@ class MainActivity : AppCompatActivity() {
         radioGroup = findViewById(R.id.radioGroup);
 
         FirebaseMessaging.getInstance().subscribeToTopic("bpmAlert")
+
+        // Log.e("ICDAPI", "Started Service")
+        // val client = ICDAPI();
+        // GlobalScope.launch {
+        //     client.getAllergens()
+        // }
 
         register_button_register.setOnClickListener {
             val email = email_edittext_registration.text.toString()
@@ -85,7 +94,7 @@ class MainActivity : AppCompatActivity() {
             .set(user)
             .addOnSuccessListener {
                 Log.d("MainActivity", "User saved to database") //user created
-                val intent = Intent(this, LatestMessagesActivity::class.java)
+                val intent = Intent(this, ProfileActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
             }

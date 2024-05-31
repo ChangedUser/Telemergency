@@ -25,6 +25,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
 
+        Log.e("ICDAPI", "Started Service")
         val client = ICDAPI();
         GlobalScope.launch {
             client.baseInformation()

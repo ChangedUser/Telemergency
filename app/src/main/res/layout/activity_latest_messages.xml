@@ -5,8 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#19FFFFFF"
-    tools:context=".LatestMessagesActivity">
-<ScrollView
+    tools:context=".ProfileActivity">
+
+  <ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 

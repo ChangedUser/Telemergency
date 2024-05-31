@@ -42,10 +42,10 @@
             android:exported="false">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".LatestMessagesActivity" />
+                android:value=".ProfileActivity" />
         </activity>
         <activity
-            android:name=".LatestMessagesActivity"
+            android:name=".ProfileActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
