@@ -96,6 +96,15 @@
                 android:hint="Current Location"
                 android:inputType="text" />
 
+            <Button
+                android:id="@+id/geolocation"
+                android:layout_width="300dp"
+                android:layout_height="64dp"
+                android:layout_marginTop="15dp"
+                android:layout_gravity="center"
+                android:text="Share Location"
+                tools:ignore="MissingConstraints" />
+
             <EditText
                 android:id="@+id/form_hurt"
                 android:layout_width="match_parent"

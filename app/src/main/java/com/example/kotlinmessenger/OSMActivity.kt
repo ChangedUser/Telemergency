@@ -16,6 +16,7 @@ import android.view.MenuItem
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_osm.*
 import org.osmdroid.api.IMapController
@@ -71,6 +72,10 @@ class OSMActivity : AppCompatActivity() {
         mapController = map?.getController()
         //mapController?.setZoom(15)
 
+        // val loc = LocationServices.getFusedLocationProviderClient(this)
+        // loc.lastLocation.addOnSuccessListener {
+        //
+        // }
         val startPoint = GeoPoint(51496994, -134733)
         mapController?.setCenter(startPoint)
 

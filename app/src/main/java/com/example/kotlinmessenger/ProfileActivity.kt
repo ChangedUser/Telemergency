@@ -19,15 +19,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.view.forEach
 import androidx.core.view.isGone
-import androidx.core.view.isVisible
-import androidx.core.view.iterator
 import com.example.kotlinmessenger.icdapi.ICDAPI
-import com.example.kotlinmessenger.icdapi.ICDAPIclient
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.api.Distribution.BucketOptions.Linear
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
@@ -172,7 +167,7 @@ class ProfileActivity : AppCompatActivity() {
         // }
 
         geolocation.setOnClickListener{
-           // val intent = Intent(this, GeoLocation::class.java)
+           // val intent = Intent(this, Geolocation::class.java)
             val intent = Intent(this, OSMActivity::class.java)
             startActivity(intent)
         }
@@ -183,13 +178,9 @@ class ProfileActivity : AppCompatActivity() {
                 //tvlatitude = findViewById(R.id.latitude)
 
 
-            if (ActivityCompat.checkSelfPermission(
-                    this@ProfileActivity,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    this@ProfileActivity,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
+            if (
+                ActivityCompat.checkSelfPermission(this@ProfileActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this@ProfileActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
             ) {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
@@ -199,26 +190,30 @@ class ProfileActivity : AppCompatActivity() {
                 // to handle the case where the user grants the permission. See the documentation
                 // for ActivityCompat#requestPermissions for more details.
 
-            }
-            fusedLocationProviderClient.lastLocation
-                .addOnCompleteListener(this@ProfileActivity) { task ->
-                    var location: Location? = task.result
-                    var loc = hashMapOf<String, String>()
+                // TODO - No permission granted
+
+            }else {
+                fusedLocationProviderClient.lastLocation
+                    .addOnCompleteListener(this@ProfileActivity) { task ->
+                        var location: Location? = task.result
+                        var loc = hashMapOf<String, String>()
 
                         if (location != null) {
-                      //  tvlatitude.text = "" + location.latitude
+                            //  tvlatitude.text = "" + location.latitude
                             loc.set("Email:", FirebaseAuth.getInstance().currentUser!!.email.toString())
                             loc.set("latitude", ""+location.latitude)
                             loc.set("longitude", ""+location.longitude)
-                    db.collection("lastknownposition")
-                        .document(FirebaseAuth.getInstance().currentUser!!.uid)
-                        .set(loc)
-                        .addOnSuccessListener{ Log.d(TAG, "DocumentSnapshot successfully written!") }
-                        .addOnFailureListener{ e -> Log.d(TAG, "Error writing document!") }
+                            db.collection("lastknownposition")
+                                .document(FirebaseAuth.getInstance().currentUser!!.uid)
+                                .set(loc)
+                                .addOnSuccessListener{ Log.d(TAG, "DocumentSnapshot successfully written!") }
+                                .addOnFailureListener{ e -> Log.d(TAG, "Error writing document!") }
 
 
+                        }
                     }
-                }
+            }
+
 
         }
 
