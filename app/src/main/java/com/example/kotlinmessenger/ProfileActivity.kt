@@ -100,9 +100,10 @@ class ProfileActivity : AppCompatActivity() {
                         blood_type_field.setVisibility(View.GONE)
                         geolocation.setVisibility(View.GONE)
                     } else {
-                        val db_ret_allergies = document.data?.get("allergies") as Map<String, String>
-                        val db_ret_drugs = document.data?.get("drugs") as Map<String, String>
-                        val db_ret_illnesses = document.data?.get("illnesses") as Map<String, String>
+
+                        val db_ret_allergies = document.data?.get("allergies") as? Map<String, String> ?: emptyMap()
+                        val db_ret_drugs = document.data?.get("drugs") as? Map<String, String> ?: emptyMap()
+                        val db_ret_illnesses = document.data?.get("illnesses") as? Map<String, String> ?: emptyMap()
 
                         if(bloodtype!=null) blood_type_field.setText(bloodtype.toString())
 
