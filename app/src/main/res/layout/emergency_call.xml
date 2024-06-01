@@ -3,187 +3,138 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:padding="16dp"
     android:background="#85E3FDF5"
     android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/form_name"
-        android:layout_width="350dp"
-        android:layout_height="30dp"
-        android:background="@color/white"
-        android:ems="10"
-        android:hint="Name"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.022" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/form_phone"
-        android:layout_width="350dp"
-        android:layout_height="30dp"
-        android:background="@color/white"
-        android:ems="10"
-        android:hint="Phone"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/form_name"
-        app:layout_constraintVertical_bias="0.03" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/form_address"
-        android:layout_width="350dp"
-        android:layout_height="30dp"
-        android:background="@color/white"
-        android:ems="10"
-        android:hint="Address"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/form_phone"
-        app:layout_constraintVertical_bias="0.03" />
+            <EditText
+                android:id="@+id/form_name"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="15dp"
+                android:background="@color/white"
+                android:ems="10"
+                android:hint="Name"
+                android:inputType="textPersonName" />
 
-    <EditText
-        android:id="@+id/form_blood"
-        android:layout_width="350dp"
-        android:layout_height="30dp"
-        android:background="@color/white"
-        android:ems="10"
-        android:hint="Blood Type"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/form_address"
-        app:layout_constraintVertical_bias="0.03" />
+            <EditText
+                android:id="@+id/form_phone"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="15dp"
+                android:background="@color/white"
+                android:ems="10"
+                android:hint="Phone"
+                android:inputType="text" />
 
-    <EditText
-        android:id="@+id/form_allergies"
-        android:layout_width="350dp"
-        android:layout_height="30dp"
-        android:background="@color/white"
-        android:ems="10"
-        android:hint="Allergies"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/form_blood"
-        app:layout_constraintVertical_bias="0.03" />
+            <EditText
+                android:id="@+id/form_address"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="15dp"
+                android:background="@color/white"
+                android:ems="10"
+                android:hint="Address"
+                android:inputType="text" />
 
-    <EditText
-        android:id="@+id/form_illnesses"
-        android:layout_width="350dp"
-        android:layout_height="30dp"
-        android:background="@color/white"
-        android:ems="10"
-        android:hint="Illnesses"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/form_allergies"
-        app:layout_constraintVertical_bias="0.03" />
+            <EditText
+                android:id="@+id/form_blood"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="15dp"
+                android:background="@color/white"
+                android:ems="10"
+                android:hint="Blood Type"
+                android:inputType="text" />
 
-    <EditText
-        android:id="@+id/form_drugs"
-        android:layout_width="350dp"
-        android:layout_height="30dp"
-        android:background="@color/white"
-        android:ems="10"
-        android:hint="Medication"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/form_illnesses"
-        app:layout_constraintVertical_bias="0.03" />
+            <EditText
+                android:id="@+id/form_allergies"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="15dp"
+                android:background="@color/white"
+                android:ems="10"
+                android:hint="Allergies"
+                android:inputType="text" />
 
-    <EditText
-        android:id="@+id/form_current"
-        android:layout_width="350dp"
-        android:layout_height="30dp"
-        android:background="@color/white"
-        android:ems="10"
-        android:hint="Current Location"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/form_drugs"
-        app:layout_constraintVertical_bias="0.12" />
+            <EditText
+                android:id="@+id/form_illnesses"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="15dp"
+                android:background="@color/white"
+                android:ems="10"
+                android:hint="Illnesses"
+                android:inputType="text" />
 
-    <EditText
-        android:id="@+id/form_hurt"
-        android:layout_width="350dp"
-        android:layout_height="30dp"
-        android:background="@color/white"
-        android:ems="10"
-        android:hint="Any Other Hurt People?"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/form_current"
-        app:layout_constraintVertical_bias="0.05" />
+            <EditText
+                android:id="@+id/form_drugs"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="15dp"
+                android:background="@color/white"
+                android:ems="10"
+                android:hint="Medication"
+                android:inputType="text" />
 
-    <EditText
-        android:id="@+id/form_whatHappened"
-        android:layout_width="350dp"
-        android:layout_height="30dp"
-        android:background="@color/white"
-        android:ems="10"
-        android:hint="What Happened?"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/form_hurt"
-        app:layout_constraintVertical_bias="0.05" />
+            <EditText
+                android:id="@+id/form_current"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="15dp"
+                android:background="@color/white"
+                android:ems="10"
+                android:hint="Current Location"
+                android:inputType="text" />
 
-    <EditText
-        android:id="@+id/form_needed"
-        android:layout_width="350dp"
-        android:layout_height="30dp"
-        android:background="@color/white"
-        android:ems="10"
-        android:hint="Any Specific Help Needed?"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/form_whatHappened"
-        app:layout_constraintVertical_bias="0.05" />
+            <EditText
+                android:id="@+id/form_hurt"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="15dp"
+                android:background="@color/white"
+                android:ems="10"
+                android:hint="Any Other Hurt People?"
+                android:inputType="text" />
 
-    <Button
-        android:id="@+id/send_request_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="158dp"
-        android:layout_marginTop="11dp"
-        android:layout_marginEnd="159dp"
-        android:layout_marginBottom="86dp"
-        android:text="Send request"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/form_needed" />
+            <EditText
+                android:id="@+id/form_whatHappened"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="15dp"
+                android:background="@color/white"
+                android:ems="10"
+                android:hint="What Happened?"
+                android:inputType="text" />
+
+            <EditText
+                android:id="@+id/form_needed"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="15dp"
+                android:background="@color/white"
+                android:ems="10"
+                android:hint="Any Specific Help Needed?"
+                android:inputType="text" />
+
+            <Button
+                android:id="@+id/send_request_button"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="11dp"
+                android:layout_gravity="center"
+                android:text="Send request" />
+        </LinearLayout>
+    </ScrollView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

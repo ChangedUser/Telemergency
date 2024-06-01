@@ -103,12 +103,14 @@ class ProfileActivity : AppCompatActivity() {
                         show_illness.setVisibility(View.GONE)
                         medical_info_field.setVisibility(View.GONE)
                         blood_type_field.setVisibility(View.GONE)
+                        geolocation.setVisibility(View.GONE)
                     } else {
                         val db_ret_allergies = document.data?.get("allergies") as Map<String, String>
                         val db_ret_drugs = document.data?.get("drugs") as Map<String, String>
                         val db_ret_illnesses = document.data?.get("illnesses") as Map<String, String>
 
                         if(bloodtype!=null) blood_type_field.setText(bloodtype.toString())
+
                         fillCheckboxes(db_ret_allergies,0, R.id.allergies_container)
                         fillCheckboxes(db_ret_illnesses, 1, R.id.illness_container)
                         fillCheckboxes(db_ret_drugs, 2, R.id.drugs_container)
@@ -383,7 +385,11 @@ class ProfileActivity : AppCompatActivity() {
         //extra fields for patient
         if (role == "Patient") {
             val bloodtype = blood_type_field.text.toString()
-            if (bloodtype!= "") user["bloodtype"] = bloodtype
+            if (bloodtype!= "") {
+                user["bloodtype"] = bloodtype
+            }else {
+                user["bloodtype"] = ""
+            }
 
             user["allergies"] = createCBContent(R.id.allergies_container)
             user["drugs"] = createCBContent(R.id.drugs_container)
