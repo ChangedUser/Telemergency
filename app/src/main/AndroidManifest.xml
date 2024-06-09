@@ -6,13 +6,14 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_GPS" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
 
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
@@ -30,6 +31,11 @@
         <activity
             android:name=".OverviewPage"
             android:exported="false" />
+
+        <activity
+            android:name=".OnCallActivity"
+            android:exported="false">
+        </activity>
         <activity
             android:name=".ChatLogActivity"
             android:exported="false">

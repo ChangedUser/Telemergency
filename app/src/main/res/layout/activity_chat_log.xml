@@ -29,11 +29,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/edittext_chat_log" />
 
+    <!-- android:background="#4DE8E8E8" -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_chat_log"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="#E8E8E8"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/chat_page_boxshape"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/meeting_id"
         app:layout_constraintEnd_toEndOf="parent"

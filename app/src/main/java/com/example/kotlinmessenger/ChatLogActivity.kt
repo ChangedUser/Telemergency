@@ -7,10 +7,14 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.InputType
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import com.example.kotlinmessenger.baseclasses.User
 import com.example.kotlinmessenger.webrtc.Constants
 import com.example.kotlinmessenger.webrtc.RTCActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -19,6 +23,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.core.Filter
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -36,30 +41,109 @@ import java.util.*
 class ChatLogActivity : AppCompatActivity() {
     private var user = User() ?: null
     private var fromId = String()
+    private var lockRead = false
     val db = Firebase.firestore
     val adapter = GroupAdapter<ViewHolder>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
         val userRole = sharePref.getString("role", "defaultRole")!!
+
+        var meetingID = ""
+        // TODO - if patientID empty, do what?
+        // var patientID = ""
+        if (this.intent.getStringExtra("chatID") != null && this.intent.getStringExtra("chatID").toString() != "") {
+            meetingID = this.intent.getStringExtra("chatID").toString()
+        }
+
+
+
         if (userRole.toString() == "Patient") {
             setTheme(R.style.Theme_TelemergencyPatient)
         }
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_log)
-        user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
+
+        // val user_id = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)?.uid
+        // val user_name = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)?.username
+
+        // If user comes from oncall activity screen (-> doctor)
+        if (this.intent.getStringExtra("patientID") != null && this.intent.getStringExtra("patientID").toString() != "") {
+            if (this.intent.getStringExtra("patientName") != null && this.intent.getStringExtra("patientName").toString() != "") {
+                var tempUser = User(this.intent.getStringExtra("patientID").toString(),
+                    this.intent.getStringExtra("patientName").toString(), "Patient", ""
+                )
+                user = tempUser
+
+                this.intent.removeExtra("patientName")
+            }
+            addToActiveChats(FirebaseAuth.getInstance().uid.toString(), this.intent.getStringExtra("patientID").toString())
+            db.collection("emergencies").document(this.intent.getStringExtra("patientID").toString()).delete()
+            this.intent.removeExtra("patientID")
+            // if user comes from emergency screen (-> patient)
+        }else if (this.intent.getStringExtra("drUID") != null && this.intent.getStringExtra("drUID").toString() != "") {
+            if (this.intent.getStringExtra("drName") != null) {
+                addToActiveChats(FirebaseAuth.getInstance().uid.toString(), this.intent.getStringExtra("drUID").toString())
+                user = User(
+                    this.intent.getStringExtra("drUID").toString(),
+                    this.intent.getStringExtra("drName").toString(),
+                    "Healthcare Professional", "")
+
+
+                this.intent.removeExtra("drUID")
+                this.intent.removeExtra("drName")
+                this.intent.removeExtra("chatID")
+                // db.collection("emergencies").document(FirebaseAuth.getInstance().currentUser!!.uid).delete()
+            }
+        }else {
+            user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
+            // TODO maybe remove the extra?
+        }
+
+
         fromId = FirebaseAuth.getInstance().uid ?: ""
         supportActionBar?.title = user?.username
+        if (user?.name != null && user?.name != ""){
+            supportActionBar?.title = user?.name
+        }
 
         // presetting some variables for the call feature
         // setContentView(R.layout.phone_start)
         Constants.isIntiatedNow = true
         Constants.isCallEnded = true
 
+
+
+        val messagesRef = db.collection("messages")
+        // create Snapshot listener for new messages
+        val query1 = messagesRef
+            .whereEqualTo("fromId", fromId)
+            .whereEqualTo("toId", user?.uid ?: "")
+
+        // // Query for messages from userId2 to userId1
+        val query2 = messagesRef
+            .whereEqualTo("fromId", user?.uid ?: "")
+            .whereEqualTo("toId", fromId)
+
+        Log.i("CHATLOG", "Starting the Chat log")
+
+        query1.addSnapshotListener{ listener, e ->
+            getMessages(adapter, fromId, user?.uid ?: "")
+        }
+        query2.addSnapshotListener{ listener, e ->
+            getMessages(adapter, fromId, user?.uid ?: "")
+        }
+
         //get the messages that will be added to adapter
-        getMessages(adapter, fromId, user?.uid ?: "")
-        recyclerview_chat_log.adapter = adapter
+        // Log.i("CHATLOG", "Size of initial (preclear) adapter: ${adapter.itemCount}")
+        // adapter.clear()
+        // Log.i("CHATLOG", "Size of initial (postclear) adapter: ${adapter.itemCount}")
+        // getMessages(adapter, fromId, user?.uid ?: "")
+        // Log.i("CHATLOG", "Size of starting adapter: ${adapter.itemCount}")
+
+        // recyclerview_chat_log.adapter = adapter
+        // recyclerview_chat_log.scrollToPosition(adapter.itemCount -1)
 
         //send new message when button is clicked
         send_button_chat_log.setOnClickListener {
@@ -67,6 +151,12 @@ class ChatLogActivity : AppCompatActivity() {
         }
         imagebutton_chat_log.setOnClickListener {
             performSendImage()
+        }
+
+        if (meetingID.isNotEmpty()) {
+            findViewById<EditText>(R.id.meeting_id).setText(meetingID)
+            findViewById<EditText>(R.id.meeting_id).isEnabled = false
+
         }
 
         call_button.setOnClickListener {
@@ -107,27 +197,11 @@ class ChatLogActivity : AppCompatActivity() {
 
             }
 
-            /*
-            db.collection("calls")
-                .document(meeting_id.text.toString())
-                .get()
-                .addOnSuccessListener {
-                    if (it["type"]=="OFFER" || it["type"]=="ANSWER" || it["type"]=="END_CALL") {
-                        meeting_id.error = "Please enter another meeting ID"
-                    } else {
-                        val intent = Intent(this@ChatLogActivity, RTCActivity::class.java)
-                        intent.putExtra("meetingID",meeting_id.text.toString())
-                        intent.putExtra("isJoin",false)
-                        startActivity(intent)
-                    }
-                }
-                .addOnFailureListener {
-                    meeting_id.error = "Please enter a new meeting ID"
-                }
 
-             */
 
         }
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -165,7 +239,7 @@ class ChatLogActivity : AppCompatActivity() {
         db.collection("messages").add(newChatMessage).addOnSuccessListener { documentReference ->
             Log.d("ChatLogActivity", "DocumentSnapshot written with ID: ${documentReference.id}")
             edittext_chat_log.text.clear()
-            adapter.add(ChatToItem(text))
+            // adapter.add(ChatToItem(text))
             //addToActiveChats(fromId, toId)
             //addToActiveChats(toId, fromId)
         }
@@ -239,7 +313,7 @@ class ChatLogActivity : AppCompatActivity() {
         db.collection("messages").add(newChatMessage).addOnSuccessListener { documentReference ->
             Log.d("ChatLogActivity", "DocumentSnapshot written with ID: ${documentReference.id}")
             //edittext_chat_log.text.clear()
-            adapter.add(ChatToImage(imagePath))
+            // adapter.add(ChatToImage(imagePath))
         }
 
         /*val reference = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/messages").push()
@@ -252,90 +326,70 @@ class ChatLogActivity : AppCompatActivity() {
 
     //get messages to display on adapter
     private fun getMessages(adapter: GroupAdapter<ViewHolder>, fromId: String, toId: String) {
-        val messagesRef = db.collection("messages")
+        if (!lockRead) {
+            lockRead = true
+            val messagesRef = db.collection("messages")
 
-        // Query for messages from userId1 to userId2
-        val query1 = messagesRef
-            .whereEqualTo("fromId", fromId)
-            .whereEqualTo("toId", toId)
+            // Query for messages from userId1 to userId2
+            val query1 = messagesRef
+                .whereEqualTo("fromId", fromId)
+                .whereEqualTo("toId", toId)
 
-        // Query for messages from userId2 to userId1
-        val query2 = messagesRef
-            .whereEqualTo("fromId", toId)
-            .whereEqualTo("toId", fromId)
+            // Query for messages from userId2 to userId1
+            val query2 = messagesRef
+                .whereEqualTo("fromId", toId)
+                .whereEqualTo("toId", fromId)
 
-        query1.get().addOnSuccessListener { querySnapshot1 ->
-            val messages1 = querySnapshot1.toObjects(ChatMessage::class.java)
-            query2.get().addOnSuccessListener { querySnapshot2 ->
-                val messages2 = querySnapshot2.toObjects(ChatMessage::class.java)
-                val allMessages = messages1 + messages2
-                val sortedMessages = allMessages.sortedBy { it.timeStamp }
-                for (chatMessageDb in sortedMessages){
-                    Log.d("ChatLogActivity", "${chatMessageDb.text}")
-                    if (chatMessageDb.text!=null && chatMessageDb.text!="") {
-                        if (chatMessageDb.text.toString().contains("_n")) {
-                            var newText = chatMessageDb.text.toString().replace("_n",System.getProperty("line.separator"))
-                            if(chatMessageDb.fromId == fromId && chatMessageDb.toId == toId) adapter.add(ChatToItem(newText))
-                            if(chatMessageDb.fromId == toId && chatMessageDb.toId == fromId) adapter.add(ChatFromItem(newText))
+
+            query1.get().addOnSuccessListener { querySnapshot1 ->
+                val messages1 = querySnapshot1.toObjects(ChatMessage::class.java)
+                adapter.clear()
+                query2.get().addOnSuccessListener { querySnapshot2 ->
+                    val messages2 = querySnapshot2.toObjects(ChatMessage::class.java)
+                    val allMessages = messages1 + messages2
+                    val sortedMessages = allMessages.sortedBy { it.timeStamp }
+                    for (chatMessageDb in sortedMessages) {
+                        //Log.d("ChatLogActivity", "${chatMessageDb.text}")
+                        if (chatMessageDb.text != null && chatMessageDb.text != "") {
+                            if (chatMessageDb.text.toString().contains("_n")) {
+                                var newText = chatMessageDb.text.toString()
+                                    .replace("_n", System.getProperty("line.separator"))
+                                if (chatMessageDb.fromId == fromId && chatMessageDb.toId == toId) {
+                                    //Log.d("ChatLogActivity", "Send to message: ${newText}")
+                                    adapter.add(ChatToItem(newText))
+                                }
+                                if (chatMessageDb.fromId == toId && chatMessageDb.toId == fromId) {
+                                    //Log.d("ChatLogActivity", "Send from message: ${newText}")
+                                    adapter.add(ChatFromItem(newText))
+                                }
+                            } else {
+                                if (chatMessageDb.fromId == fromId && chatMessageDb.toId == toId) adapter.add(
+                                    ChatToItem(chatMessageDb.text.toString())
+                                )
+                                if (chatMessageDb.fromId == toId && chatMessageDb.toId == fromId) adapter.add(
+                                    ChatFromItem(chatMessageDb.text.toString())
+                                )
+                            }
+
                         }
-                        else {
-                            if(chatMessageDb.fromId == fromId && chatMessageDb.toId == toId) adapter.add(ChatToItem(chatMessageDb.text.toString()))
-                            if(chatMessageDb.fromId == toId && chatMessageDb.toId == fromId) adapter.add(ChatFromItem(chatMessageDb.text.toString()))
+                        if (chatMessageDb.imagePath != null && chatMessageDb.imagePath != "") {
+                            if (chatMessageDb.fromId == fromId && chatMessageDb.toId == toId) adapter.add(
+                                ChatToImage(chatMessageDb.imagePath.toString())
+                            )
+                            if (chatMessageDb.fromId == toId && chatMessageDb.toId == fromId) adapter.add(
+                                ChatToImage(chatMessageDb.imagePath.toString())
+                            )
                         }
-
                     }
-                    if (chatMessageDb.imagePath!=null && chatMessageDb.imagePath!="") {
-                        if(chatMessageDb.fromId == fromId && chatMessageDb.toId == toId) adapter.add(ChatToImage(chatMessageDb.imagePath.toString()))
-                        if(chatMessageDb.fromId == toId && chatMessageDb.toId == fromId) adapter.add(ChatToImage(chatMessageDb.imagePath.toString()))
-                    }
+                    recyclerview_chat_log.adapter = adapter
+                    recyclerview_chat_log.scrollToPosition(adapter.itemCount - 1)
+                    Log.i("CHATLOG", "Size of adapter in function: ${adapter.itemCount}")
+                    lockRead = false
                 }
+
             }
+
         }
-        //old db method
-        //val reference = FirebaseDatabase.getInstance("https://telemedizinproject-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/messages")
-        /*reference.addChildEventListener(object: ChildEventListener{
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val chatMessage = snapshot.getValue(ChatMessage::class.java)
-                if (chatMessage != null) {
-                    var newText = ""
-                    if (chatMessage.text!=null && chatMessage.text!="") {
-                        Log.d("ChatLogActivity", chatMessage.text)
-                        if (chatMessage.text.toString().contains("_n")) {
-                            newText = chatMessage.text.toString().replace("_n",System.getProperty("line.separator"))
-                        }
-
-                        if(chatMessage.fromId == fromId && chatMessage.toId == toId) {
-                            if (newText!="") {
-                                adapter.add(ChatToItem(newText))
-                                newText = ""
-                            } else {
-                                adapter.add(ChatToItem(chatMessage.text))
-                            }
-                        }
-                        if(chatMessage.fromId == toId && chatMessage.toId == fromId) {
-                            if (newText!="") {
-                                adapter.add(ChatFromItem(newText))
-                                newText = ""
-                            } else {
-                                adapter.add(ChatFromItem(chatMessage.text))
-                            }
-                        }
-                    } else if (chatMessage.imagePath != null && chatMessage.imagePath != "") {
-                        Log.d("ChatLogActivity", chatMessage.imagePath)
-                        if(chatMessage.fromId == fromId && chatMessage.toId == toId) adapter.add(ChatToImage(chatMessage.imagePath))
-                        if(chatMessage.fromId == toId && chatMessage.toId == fromId) adapter.add(ChatFromImage(chatMessage.imagePath))
-                    }
-                }
-            }
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-            }
-            override fun onChildRemoved(snapshot: DataSnapshot) {
-            }
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-            }
-            override fun onCancelled(error: DatabaseError) {
-            }
-        } ) */
     }
 
     //helper methods to display the chat on the screen

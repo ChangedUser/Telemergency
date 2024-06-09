@@ -1,7 +1,9 @@
 package com.example.kotlinmessenger
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcel
 import android.os.Parcelable
 import android.util.Log
 import android.view.View
@@ -61,6 +63,7 @@ class MainActivity : AppCompatActivity() {
                     val uid = it.result?.user?.uid ?: ""
                     Log.d("MainActivity", "Successfully created user with uid: $uid" )
                     //saveUserToFirebaseDatabase(uid)
+
                     saveUserToFirestoreDatabase(uid,username_edittext_registration.text.toString(),role,email_edittext_registration.text.toString())
                 }
                 .addOnFailureListener {
@@ -91,6 +94,13 @@ class MainActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 Log.d("MainActivity", "User saved to database") //user created
                 val intent = Intent(this, ProfileActivity::class.java)
+
+                // Setting User Role Pref ...
+                val sharePref = getSharedPreferences("USER_INFO", Context.MODE_PRIVATE)
+                var editor = sharePref.edit()
+                editor.putString("role", role)
+                editor.apply()
+
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
             }
@@ -106,12 +116,5 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-@Parcelize
-class User(val uid : String, val username : String, val role : String): Parcelable {
-    constructor(): this("", "", "")
-}
 
-@Parcelize
-class Message(val fromId: String, val id: String, val text: String, val timestamp: Timestamp, val toId: String): Parcelable {
-    constructor(): this("", "", "", java.sql.Timestamp(0) , "")
-}
+

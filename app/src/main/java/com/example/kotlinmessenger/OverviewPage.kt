@@ -127,6 +127,12 @@ class OverviewPage : AppCompatActivity() {
                 val intent = Intent(this, ProfileActivity::class.java)
                 startActivity(intent)
             }
+
+            onCall_button.visibility = View.VISIBLE
+            onCall_button.setOnClickListener {
+                val intent = Intent(this, OnCallActivity::class.java)
+                startActivity(intent)
+            }
         }
 
     }

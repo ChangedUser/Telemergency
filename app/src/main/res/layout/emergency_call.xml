@@ -8,13 +8,23 @@
     android:layout_height="match_parent">
 
     <ScrollView
+        android:id="@+id/emergencyscroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:id="@+id/emergencylayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/emergency_doc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:visibility="gone" />
 
             <EditText
                 android:id="@+id/form_name"
@@ -100,8 +110,8 @@
                 android:id="@+id/geolocation"
                 android:layout_width="300dp"
                 android:layout_height="64dp"
-                android:layout_marginTop="15dp"
                 android:layout_gravity="center"
+                android:layout_marginTop="15dp"
                 android:text="Share Location"
                 tools:ignore="MissingConstraints" />
 
@@ -139,11 +149,41 @@
                 android:id="@+id/send_request_button"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:layout_marginTop="11dp"
                 android:layout_gravity="center"
+                android:layout_marginTop="11dp"
                 android:text="Send request" />
         </LinearLayout>
     </ScrollView>
 
+    <LinearLayout
+        android:id="@+id/progresslayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/calling_textfield"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Emergency is being processed... "
+            android:textSize="24sp" />
+
+        <ProgressBar
+            android:id="@+id/progressBar_cyclic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minWidth="100dp"
+            android:minHeight="100dp" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

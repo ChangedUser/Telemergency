@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.user_row_new_message.view.*
 import android.content.ContentValues.TAG
 import android.view.Menu
 import android.view.MenuItem
+import com.example.kotlinmessenger.baseclasses.User
 import java.util.ArrayList
 /*import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -51,7 +52,12 @@ class NewMessageActivity : AppCompatActivity() {
 
             if (userRole == "Patient") {
                 val intent = Intent(this, RequestEmergency::class.java)
-                intent.putExtra(USER_KEY, userItem.user)
+                intent.putExtra(USER_KEY, userItem.user?.username)
+                val b = Bundle()
+                b.putString("drID", item.user?.uid.toString())
+                b.putString("drUser", item.user?.username.toString())
+                b.putString("drName", item.user?.name.toString())
+                intent.putExtras(b)
                 startActivity(intent)
             } else if (userRole == "Healthcare Professional") {
                 val intent = Intent(this, ChatLogActivity::class.java)
@@ -96,6 +102,28 @@ class NewMessageActivity : AppCompatActivity() {
         val USER_KEY = "USER_KEY"
     }
 
+    private fun getUserByID(uid: String): User{
+        var uidUser = User()
+        db.collection("users")
+            .whereEqualTo("uid", uid)
+            .get()
+            .addOnSuccessListener { users ->
+                for (dbUser in users) {
+                    var uid = dbUser.data?.get("uid")
+                    var username = dbUser.data?.get("username")
+                    var role = dbUser.data?.get("role")
+                    var name = dbUser.data?.get("name")
+                    uidUser = User(uid.toString(),username.toString(),role.toString(), name.toString())
+                    // just get the first user - we should never have more than one
+                    // potential TODO
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error getting documents: ", exception)
+            }
+
+        return uidUser
+    }
     private fun getCurrentUser(adapterActive: GroupAdapter<ViewHolder>,adapter: GroupAdapter<ViewHolder>){
         val docRef = db.collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
         docRef.get()
@@ -132,7 +160,9 @@ class NewMessageActivity : AppCompatActivity() {
                     var uid = dbUser.data?.get("uid")
                     var username = dbUser.data?.get("username")
                     var role = dbUser.data?.get("role")
-                    var user = User(uid.toString(),username.toString(),role.toString())
+                    var name = dbUser.data?.get("name ")
+                    var user = User(uid.toString(),username.toString(),role.toString(), name.toString())
+                    // user.name = dbUser.data?.get("name").toString()
                     Log.d(TAG, "Creating User: " + user.username + " with uid " +  user.uid + " and role " + user.role)
                     //appends
                     if (user.uid != FirebaseAuth.getInstance().currentUser?.uid && !(activeChats.contains(user.uid))) {
@@ -160,7 +190,9 @@ class NewMessageActivity : AppCompatActivity() {
                         var uid = dbUser.data?.get("uid")
                         var username = dbUser.data?.get("username")
                         var role = dbUser.data?.get("role")
-                        var user = User(uid.toString(),username.toString(),role.toString())
+                        var name = dbUser.data?.get("name")
+                        var user = User(uid.toString(),username.toString(),role.toString(), name.toString() )
+                        // user.name = dbUser.data?.get("name").toString()
                         Log.d(TAG, "Creating User: " + user.username + " with uid " +  user.uid + " and role " + user.role)
                         //appends
                         if (user.uid != FirebaseAuth.getInstance().currentUser?.uid) {
@@ -226,6 +258,11 @@ class NewMessageActivity : AppCompatActivity() {
     class UserItem(val user: User?): Item<ViewHolder>() {
         override fun bind(viewHolder: ViewHolder, position: Int) {
             viewHolder.itemView.username_textview_newmessage.text = user?.username ?: null
+            user?.name.let {
+                if (it != "null" && it != "") {
+                    viewHolder.itemView.username_textview_newmessage.text = it
+                }
+            }
         }
         override fun getLayout(): Int {
             return R.layout.user_row_new_message
