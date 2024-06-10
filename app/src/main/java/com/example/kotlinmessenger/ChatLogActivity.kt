@@ -239,6 +239,8 @@ class ChatLogActivity : AppCompatActivity() {
         db.collection("messages").add(newChatMessage).addOnSuccessListener { documentReference ->
             Log.d("ChatLogActivity", "DocumentSnapshot written with ID: ${documentReference.id}")
             edittext_chat_log.text.clear()
+            addToActiveChats(fromId,toId)
+            addToActiveChats(toId,fromId)
             // adapter.add(ChatToItem(text))
             //addToActiveChats(fromId, toId)
             //addToActiveChats(toId, fromId)

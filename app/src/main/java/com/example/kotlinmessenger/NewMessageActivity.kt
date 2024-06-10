@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.user_row_new_message.view.*
 import android.content.ContentValues.TAG
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import com.example.kotlinmessenger.baseclasses.User
 import java.util.ArrayList
 /*import com.google.firebase.database.DataSnapshot
@@ -40,6 +41,10 @@ class NewMessageActivity : AppCompatActivity() {
         setContentView(R.layout.activity_new_message)
         supportActionBar?.title = "Select User"
 
+        if (userRole.toString() != "Patient") {
+            findViewById<TextView>(R.id.textView2).text = "Contact other Specialist"
+        }
+
         //adapter needed for the recycler view, will contain all the users
         val adapter = GroupAdapter<ViewHolder>()
         val adapterActive = GroupAdapter<ViewHolder>()
@@ -50,18 +55,19 @@ class NewMessageActivity : AppCompatActivity() {
         adapter.setOnItemClickListener { item, view ->
             val userItem = item as UserItem
 
+            val b = Bundle()
+            b.putString("drID", item.user?.uid.toString())
+            b.putString("drUser", item.user?.username.toString())
+            b.putString("drName", item.user?.name.toString())
             if (userRole == "Patient") {
                 val intent = Intent(this, RequestEmergency::class.java)
                 intent.putExtra(USER_KEY, userItem.user?.username)
-                val b = Bundle()
-                b.putString("drID", item.user?.uid.toString())
-                b.putString("drUser", item.user?.username.toString())
-                b.putString("drName", item.user?.name.toString())
                 intent.putExtras(b)
                 startActivity(intent)
             } else if (userRole == "Healthcare Professional") {
                 val intent = Intent(this, ChatLogActivity::class.java)
                 intent.putExtra(USER_KEY, userItem.user)
+                intent.putExtras(b)
                 startActivity(intent)
             }
         }
@@ -160,7 +166,7 @@ class NewMessageActivity : AppCompatActivity() {
                     var uid = dbUser.data?.get("uid")
                     var username = dbUser.data?.get("username")
                     var role = dbUser.data?.get("role")
-                    var name = dbUser.data?.get("name ")
+                    var name = dbUser.data?.get("name")
                     var user = User(uid.toString(),username.toString(),role.toString(), name.toString())
                     // user.name = dbUser.data?.get("name").toString()
                     Log.d(TAG, "Creating User: " + user.username + " with uid " +  user.uid + " and role " + user.role)
