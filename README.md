@@ -18,4 +18,45 @@ A medical healthcare app for emergency requests
       - https://id.who.int/swagger/index.html (Swagger Page)
       - https://icd.who.int/docs/icd-api/APIDoc-Version2/ (Docs) 
 
-### Setup the Elastic Server
+### Setup the Elastic and Kibana Server
+
+In order to run docker-compose with one elasticsearch and one kibana container a docker-compose configuration File (docker-compose.yml) needs to be created with images for the raspberry pi, e.g.:
+
+version: "2.0"
+
+services:
+  es01:
+    image: comworkio/elasticsearch:7.9.1-1.8-arm
+    container_name: es01
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - elastic
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+  kib01:
+    image: comworkio/kibana:7.9.1-1.9-arm
+    container_name: kib01
+    ports:
+      - 5601:5601
+    environment:
+      - ES_PROTO=http
+      - ES_HOST=es01
+      - ES_PORT=9200
+    networks:
+      - elastic
+    depends_on: 
+      - es01
+
+volumes:
+  data01:
+    driver: local
+
+networks:
+  elastic:
+    driver: bridge
+
+After the docker-compose file is created with the following command the elastic and kibana container will start up: docker-compose up
+
+
